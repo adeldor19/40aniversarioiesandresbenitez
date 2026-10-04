@@ -180,10 +180,10 @@
 
     const CELL_SIZE = 1.4;
 
-    // Museo lineal: vestíbulo → Sala 1 → Sala 2 → Sala 3.
-    // Las puertas centrales permiten avanzar de una sala a la siguiente.
+    // Museo lineal: vestíbulo → Sala 1 → Sala 2 → Sala 3 → Sala 4 → salida.
+    // Las aperturas centrales permiten avanzar de una sala a la siguiente.
     const GH = 9;
-    const GW = 39;
+    const GW = 35;
 
     const grid = Array.from({ length: GH }, (_, gy) => {
       const row = Array(GW).fill('.');
@@ -194,8 +194,8 @@
         }
       }
 
-      [6, 11, 18, 23, 25].forEach((wallX) => {
-        if (wallX === 25 || gy !== 4) row[wallX] = '#';
+      [6, 11, 18, 23, 30, 33].forEach((wallX) => {
+        if (wallX === 33 || gy !== 4) row[wallX] = '#';
       });
 
       return row.join('');
@@ -492,7 +492,7 @@
     // Cada cara identifica exactamente el espacio que queda detrás de ese muro.
     //
     // VESTÍBULO | muro 6 | SALA 1 | muro 11 | SALA 2 |
-    // muro 18 | SALA 3 | muro 23 | SALIDA | muro 25 | FIN
+    // muro 18 | SALA 3 | muro 23 | SALA 4 | muro 30 | SALIDA | muro 33 | FIN
 
     // Muro 6 · VESTÍBULO / SALA 1
     addWallSign(6, 3, 'VESTÍBULO', '40 AÑOS DE HISTORIA', 'x-', 1.00, 0.46);
@@ -506,12 +506,16 @@
     addWallSign(18, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 1.00, 0.46);
     addWallSign(18, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 1.00, 0.46);
 
-    // Muro 23 · SALA 3 / ZONA DE SALIDA
+    // Muro 23 · SALA 3 / SALA 4
     addWallSign(23, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.00, 0.46);
-    addWallSign(23, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x+', 1.00, 0.46);
+    addWallSign(23, 3, '04 · SUS OBRAS', 'EL LEGADO ARTÍSTICO', 'x+', 1.00, 0.46);
 
-    // Muro 25 · cierre de la zona de salida
-    addWallSign(25, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x-', 1.00, 0.46);
+    // Muro 30 · SALA 4 / ZONA DE SALIDA
+    addWallSign(30, 3, '04 · SUS OBRAS', 'EL LEGADO ARTÍSTICO', 'x-', 1.00, 0.46);
+    addWallSign(30, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x+', 1.00, 0.46);
+
+    // Muro 33 · cierre de la zona de salida
+    addWallSign(33, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x-', 1.00, 0.46);
 
     // La línea temporal principal del vestíbulo es la única cronología visible.
 
@@ -619,7 +623,10 @@
       'Su taller y su oficio',
       '',
       '03 · JEREZ',
-      'El siglo XVIII'
+      'El siglo XVIII',
+      '',
+      '04 · SUS OBRAS',
+      'El legado artístico'
     ], 'z-', 1.72, 0.98);
 
     // ------------------------------------------------------------
@@ -696,8 +703,8 @@
 
     const frameGroup = new THREE.Group();
 
-    // Primera pieza: pared interior de la Sala 1.
-    const museumWall = gridToWorld(5, 2);
+    // Primera pieza: pared interior de la Sala 4 · SUS OBRAS.
+    const museumWall = gridToWorld(29, 2);
     frameGroup.position.set(
       museumWall.x + CELL_SIZE / 2 + 0.055,
       1.48,
