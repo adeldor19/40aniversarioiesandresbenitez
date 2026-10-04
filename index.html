@@ -996,6 +996,101 @@ vestibuleInteractive.push(questionStand);
     vestibuleInteractive.push(logoGroup);
 
     // ------------------------------------------------------------
+    // SALA 1 · PIEZA DESTACADA
+    // ------------------------------------------------------------
+    // Puertas del Sagrario de San Miguel de Jerez de la Frontera.
+    // Se presenta en la pared lateral izquierda al entrar en la sala.
+    const sagrarioGroup = new THREE.Group();
+
+    const sagrarioWall = gridToWorld(6, 6);
+
+    const sagrarioFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(1.28, 0.94, 0.08),
+      new THREE.MeshStandardMaterial({
+        color: 0xB58A5A,
+        roughness: 0.48,
+        metalness: 0.18
+      })
+    );
+
+    const sagrarioCanvas = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.10, 0.78),
+      new THREE.MeshBasicMaterial({
+        color: 0xF5EFE5,
+        side: THREE.DoubleSide
+      })
+    );
+
+    const sagrarioLoader = new THREE.TextureLoader();
+    sagrarioLoader.load(
+      './sagrario.jpg',
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        sagrarioCanvas.material.map = texture;
+        sagrarioCanvas.material.needsUpdate = true;
+      },
+      undefined,
+      (error) => {
+        console.warn('No se ha podido cargar sagrario.jpg.', error);
+      }
+    );
+
+    // Cara interior del muro 6, orientada hacia Sala 1.
+    sagrarioGroup.position.set(
+      sagrarioWall.x + CELL_SIZE / 2 + 0.055,
+      1.65,
+      sagrarioWall.z
+    );
+    sagrarioGroup.rotation.y = Math.PI / 2;
+
+    sagrarioCanvas.position.z = 0.046;
+    sagrarioGroup.add(sagrarioFrame);
+    sagrarioGroup.add(sagrarioCanvas);
+
+    const sagrarioLabelCanvas = document.createElement('canvas');
+    sagrarioLabelCanvas.width = 1400;
+    sagrarioLabelCanvas.height = 220;
+    const sagrarioLabelContext = sagrarioLabelCanvas.getContext('2d');
+
+    sagrarioLabelContext.fillStyle = '#5B2939';
+    sagrarioLabelContext.fillRect(0, 0, 1400, 220);
+    sagrarioLabelContext.textAlign = 'center';
+    sagrarioLabelContext.textBaseline = 'middle';
+    sagrarioLabelContext.fillStyle = '#F5EFE5';
+    sagrarioLabelContext.font = 'bold 42px Arial';
+    sagrarioLabelContext.fillText('PUERTAS DEL SAGRARIO', 700, 78);
+    sagrarioLabelContext.fillStyle = '#B58A5A';
+    sagrarioLabelContext.font = '30px Arial';
+    sagrarioLabelContext.fillText('SAN MIGUEL · JEREZ DE LA FRONTERA', 700, 148);
+
+    const sagrarioLabelTexture = new THREE.CanvasTexture(sagrarioLabelCanvas);
+    sagrarioLabelTexture.colorSpace = THREE.SRGBColorSpace;
+    sagrarioLabelTexture.minFilter = THREE.LinearFilter;
+    sagrarioLabelTexture.magFilter = THREE.LinearFilter;
+    sagrarioLabelTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+    const sagrarioLabel = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.28, 0.20),
+      new THREE.MeshBasicMaterial({
+        map: sagrarioLabelTexture,
+        side: THREE.DoubleSide
+      })
+    );
+    sagrarioLabel.position.set(0, -0.58, 0.046);
+
+    sagrarioGroup.add(sagrarioLabel);
+    sagrarioGroup.userData.museum = {
+      titulo: 'Puertas del Sagrario de San Miguel',
+      autor: 'Jerez de la Frontera',
+      descripcion: 'Pieza presentada en la Sala 1 como ejemplo del patrimonio artístico jerezano relacionado con el trabajo de la madera.',
+      curiosidad: 'La imagen muestra las puertas talladas del Sagrario de San Miguel de Jerez de la Frontera.'
+    };
+
+    scene.add(sagrarioGroup);
+    vestibuleInteractive.push(sagrarioGroup);
+
+    // ------------------------------------------------------------
     // VESTÍBULO · PIEZAS ESCÉNICAS
     // ------------------------------------------------------------
 
