@@ -715,16 +715,18 @@
 
     const logoWall = gridToWorld(0, 6);
     logoFrame.position.set(
+      logoWall.x + CELL_SIZE / 2 + 0.012,
+      1.62,
+      logoWall.z
+    );
+    logoFrame.rotation.y = Math.PI / 2;
+
+    logoCanvas.position.set(
       logoWall.x + CELL_SIZE / 2 + 0.055,
       1.62,
       logoWall.z
     );
-
-    logoCanvas.position.set(
-      logoWall.x + CELL_SIZE / 2 + 0.102,
-      1.62,
-      logoWall.z
-    );
+    logoCanvas.rotation.y = Math.PI / 2;
 
     const logoGroup = new THREE.Group();
     logoGroup.add(logoFrame);
@@ -755,10 +757,11 @@
     );
 
     logoLabel.position.set(
-      logoWall.x + CELL_SIZE / 2 + 0.108,
+      logoWall.x + CELL_SIZE / 2 + 0.062,
       0.82,
       logoWall.z
     );
+    logoLabel.rotation.y = Math.PI / 2;
 
     logoGroup.add(logoLabel);
     logoGroup.userData.museum = {
@@ -835,12 +838,13 @@
     vestibuleInteractive.push(workshop);
 
     // Pregunta de entrada: se recuperará al final del museo.
-    const questionPanel = addVestibulePanel(0, 2, 'UNA PREGUNTA PARA EMPEZAR', [
+    const questionPanel = addVestibulePanel(6, 2, 'UNA PREGUNTA PARA EMPEZAR', [
       '¿Qué relación existe',
       'entre un artista del siglo XVIII',
       'y un instituto del siglo XXI?',
       'La respuesta está al final.'
-    ], 'x+', 0.82, 0.58);
+    ], 'x-', 0.74, 0.48);
+    questionPanel.position.y = 1.48;
     questionPanel.userData.museum = {
       titulo: 'Una pregunta para empezar',
       autor: 'Reto del visitante',
