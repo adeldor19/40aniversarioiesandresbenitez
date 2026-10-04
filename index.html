@@ -393,20 +393,115 @@
     }
 
     // El cartel ocupa menos que la celda de pared: nunca sobresale por los laterales.
-    addWallSign(
-      0, 6,
-      'MUSEO VIRTUAL',
-      'ANDRÉS BENÍTEZ · 40.º ANIVERSARIO',
-      'x+',
-      1.12,
-      0.56
+    // Gran título de bienvenida, centrado en el eje del vestíbulo.
+    const heroTexture = createCanvasTexture(1200, 500, (ctx, w, h) => {
+      ctx.fillStyle = '#0b1728';
+      ctx.fillRect(0, 0, w, h);
+
+      const gradient = ctx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, '#183552');
+      gradient.addColorStop(1, '#0b1728');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(24, 24, w - 48, h - 48);
+
+      ctx.strokeStyle = '#f08a3c';
+      ctx.lineWidth = 8;
+      ctx.strokeRect(24, 24, w - 48, h - 48);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#f08a3c';
+      ctx.font = 'bold 32px Arial';
+      ctx.fillText('40.º ANIVERSARIO', w / 2, 120);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 76px Arial';
+      ctx.fillText('IES ANDRÉS BENÍTEZ', w / 2, 215);
+
+      ctx.fillStyle = '#dce8f5';
+      ctx.font = '28px Arial';
+      ctx.fillText('EL LEGADO DE ANDRÉS BENÍTEZ', w / 2, 285);
+
+      ctx.strokeStyle = '#54708d';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(300, 330);
+      ctx.lineTo(900, 330);
+      ctx.stroke();
+
+      ctx.fillStyle = '#9eb1c4';
+      ctx.font = '22px Arial';
+      ctx.fillText('MUSEO VIRTUAL · UN RECORRIDO POR LA HISTORIA', w / 2, 385);
+    });
+
+    const heroPanel = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.15, 0.90),
+      new THREE.MeshBasicMaterial({ map: heroTexture, side: THREE.DoubleSide })
     );
+    const heroWall = gridToWorld(0, 6);
+    heroPanel.position.set(
+      heroWall.x + CELL_SIZE / 2 + 0.045,
+      1.85,
+      heroWall.z
+    );
+    heroPanel.rotation.y = Math.PI / 2;
+    scene.add(heroPanel);
+
+    // Línea temporal centrada bajo el título.
+    const timelineTexture = createCanvasTexture(1200, 300, (ctx, w, h) => {
+      ctx.fillStyle = '#101c2d';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = '#f08a3c';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(120, 150);
+      ctx.lineTo(1080, 150);
+      ctx.stroke();
+
+      const years = ['1725', '1786', '1986', '2026'];
+      const labels = ['Nace', 'Fallece', 'Nace el IES', '40.º aniversario'];
+      const xs = [120, 440, 760, 1080];
+
+      ctx.textAlign = 'center';
+      xs.forEach((x, i) => {
+        ctx.fillStyle = '#f08a3c';
+        ctx.beginPath();
+        ctx.arc(x, 150, 13, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 32px Arial';
+        ctx.fillText(years[i], x, 95);
+        ctx.fillStyle = '#9eb1c4';
+        ctx.font = '20px Arial';
+        ctx.fillText(labels[i], x, 205);
+      });
+    });
+
+    const timelinePanel = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.15, 0.54),
+      new THREE.MeshBasicMaterial({ map: timelineTexture, side: THREE.DoubleSide })
+    );
+    timelinePanel.position.set(
+      heroWall.x + CELL_SIZE / 2 + 0.045,
+      0.78,
+      heroWall.z
+    );
+    timelinePanel.rotation.y = Math.PI / 2;
+    scene.add(timelinePanel);
 
     // Señalización de recorrido: cada tramo anuncia la sala que viene.
+    // Señalización siempre orientada hacia el sentido de llegada.
+    // Cada cartel tiene una segunda copia en la cara opuesta para el regreso.
+    addWallSign(6, 4, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x+', 0.98, 0.46);
     addWallSign(6, 4, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 0.98, 0.46);
+
     addWallSign(11, 4, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 0.98, 0.46);
+    addWallSign(11, 4, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 0.98, 0.46);
+
+    addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 0.98, 0.46);
     addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 0.98, 0.46);
+
     addWallSign(23, 4, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 0.98, 0.46);
+    addWallSign(23, 4, '← SALIDA', 'REGRESA POR EL RECORRIDO', 'x-', 0.98, 0.46);
 
     const routeTexture = createCanvasTexture(768, 220, (ctx, w, h) => {
       ctx.fillStyle = '#101c2d';
