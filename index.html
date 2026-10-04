@@ -507,11 +507,11 @@
     addWallSign(18, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 1.00, 0.46);
 
     // Muro 23 · SALA 3 / SALA 4
-    addWallSign(23, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.00, 0.46);
-    addWallSign(23, 3, '04 · SUS OBRAS', 'EL LEGADO ARTÍSTICO', 'x+', 1.00, 0.46);
+    addWallSign(23, 3, '03 · SUS OBRAS', 'EL LEGADO ARTÍSTICO', 'x-', 1.00, 0.46);
+    addWallSign(23, 3, '04 · JEREZ', 'EL SIGLO XVIII', 'x+', 1.00, 0.46);
 
     // Muro 30 · SALA 4 / ZONA DE SALIDA
-    addWallSign(30, 3, '04 · SUS OBRAS', 'EL LEGADO ARTÍSTICO', 'x-', 1.00, 0.46);
+    addWallSign(30, 3, '04 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.00, 0.46);
     addWallSign(30, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x+', 1.00, 0.46);
 
     // Muro 33 · cierre de la zona de salida
@@ -544,34 +544,16 @@
         ctx.lineTo(730, 118);
         ctx.stroke();
 
-        ctx.textAlign = 'left';
+        ctx.textAlign = 'center';
         ctx.fillStyle = '#F5EFE5';
         ctx.font = '24px Arial';
 
-        let y = 175;
-        lines.forEach((line, index) => {
-          const words = line.split(' ');
-          let current = '';
-          const maxWidth = 680;
-          const lineHeight = 36;
+        const visibleLines = lines.filter(Boolean);
+        const lineHeight = 38;
+        const startY = 180 - ((visibleLines.length - 1) * lineHeight) / 2;
 
-          words.forEach((word) => {
-            const test = current ? current + ' ' + word : word;
-            if (ctx.measureText(test).width > maxWidth) {
-              ctx.fillText(current, 110, y);
-              y += lineHeight;
-              current = word;
-            } else {
-              current = test;
-            }
-          });
-
-          if (current) {
-            ctx.fillText(current, 110, y);
-            y += lineHeight;
-          }
-
-          if (index < lines.length - 1) y += 14;
+        visibleLines.forEach((line, index) => {
+          ctx.fillText(line, w / 2, startY + index * lineHeight);
         });
       });
     }
@@ -618,15 +600,12 @@
     addVestibulePanel(4, 8, 'TU RECORRIDO', [
       '01 · EL HOMBRE',
       '¿Quién fue Andrés Benítez?',
-      '',
       '02 · EL ARTISTA',
       'Su taller y su oficio',
-      '',
-      '03 · JEREZ',
-      'El siglo XVIII',
-      '',
-      '04 · SUS OBRAS',
-      'El legado artístico'
+      '03 · SUS OBRAS',
+      'El legado artístico',
+      '04 · JEREZ',
+      'El siglo XVIII'
     ], 'z-', 1.72, 0.98);
 
     // ------------------------------------------------------------
