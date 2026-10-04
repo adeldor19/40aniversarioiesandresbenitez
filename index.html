@@ -1256,6 +1256,220 @@ vestibuleInteractive.push(questionStand);
     }
 
     // ------------------------------------------------------------
+    // SALA 2 · EL ARTISTA
+    // ------------------------------------------------------------
+    // La sala se centra en cómo trabajaba Andrés Benítez:
+    // taller, herramientas, oficios y transformación de la madera.
+    const sala2Intro = addVestibulePanel(13, 0, '02 · EL ARTISTA', [
+      'DE LA MADERA A LA OBRA',
+      'El trabajo de Andrés Benítez unía oficio,',
+      'diseño y conocimiento de los materiales.',
+      'En esta sala descubrirás cómo diferentes',
+      'oficios podían formar parte de una misma obra.'
+    ], 'z+', 2.50, 1.58);
+
+    const sala2Process = addVestibulePanel(17, 8, 'DEL OFICIO A LA OBRA', [
+      'MADERA → TALLA → ENSAMBLAJE → RETABLO',
+      'Cada paso transforma una parte del trabajo',
+      'hasta convertirla en una obra completa.',
+      'Observa el taller y descubre qué hace cada oficio.'
+    ], 'z-', 2.50, 1.34);
+
+    const sala2Trades = addVestibulePanel(12, 6, 'CUATRO OFICIOS · UNA OBRA', [
+      'TALLISTA · Da forma y ornamenta la madera.',
+      'ENSAMBLADOR · Une y monta las piezas.',
+      'RETABLISTA · Diseña y construye retablos.',
+      'ARQUITECTO · Interviene en espacios y edificios.'
+    ], 'z-', 2.50, 1.42);
+
+    const sala2Question = addVestibulePanel(18, 1, 'UNA PREGUNTA PARA PENSAR', [
+      '¿Cómo puede una misma persona',
+      'dominar oficios tan diferentes?',
+      '',
+      'La respuesta está en entender',
+      'el taller y el proceso de trabajo.'
+    ], 'x-', 1.16, 1.12);
+
+    sala2Intro.userData.museum = {
+      titulo: '02 · El Artista',
+      autor: 'Sala 2 · Su taller y su oficio',
+      descripcion: 'El trabajo de Andrés Benítez combinaba distintas habilidades relacionadas con la talla, el ensamblaje, los retablos y la arquitectura.',
+      curiosidad: 'En esta sala el visitante puede recorrer el proceso desde el material y las herramientas hasta la obra terminada.'
+    };
+
+    sala2Process.userData.museum = {
+      titulo: 'Del oficio a la obra',
+      autor: 'Sala 2 · El Artista',
+      descripcion: 'Una obra compleja podía reunir diferentes trabajos: preparar y tallar la madera, construir y ensamblar sus partes y desarrollar la composición del retablo.',
+      curiosidad: 'Los cuatro oficios no deben entenderse como compartimentos aislados, sino como conocimientos que podían complementarse.'
+    };
+
+    sala2Trades.userData.museum = {
+      titulo: 'Cuatro oficios · Una obra',
+      autor: 'Sala 2 · El Artista',
+      descripcion: 'Andrés Benítez aparece documentado como tallista, ensamblador, retablista y arquitecto.',
+      curiosidad: 'La combinación de estos oficios ayuda a entender la amplitud de su actividad artística.'
+    };
+
+    sala2Question.userData.museum = {
+      titulo: 'Una pregunta para pensar',
+      autor: 'Sala 2 · El Artista',
+      descripcion: '¿Cómo puede una misma persona dominar oficios tan diferentes?',
+      curiosidad: 'Observa el taller y relaciona cada herramienta y cada proceso con los cuatro oficios que has descubierto.'
+    };
+
+    vestibuleInteractive.push(
+      sala2Intro,
+      sala2Process,
+      sala2Trades,
+      sala2Question
+    );
+
+    // Taller 3D de Sala 2.
+    // Se presenta como una pequeña estación de trabajo interactiva.
+    const sala2Workshop = new THREE.Group();
+
+    const workshopTableMaterial = new THREE.MeshStandardMaterial({
+      color: 0x5B2939,
+      roughness: 0.78
+    });
+    const workshopWoodMaterial = new THREE.MeshStandardMaterial({
+      color: 0xB58A5A,
+      roughness: 0.88
+    });
+    const workshopMetalMaterial = new THREE.MeshStandardMaterial({
+      color: 0xCDBFA8,
+      roughness: 0.34,
+      metalness: 0.58
+    });
+
+    const tableTop = new THREE.Mesh(
+      new THREE.BoxGeometry(1.65, 0.12, 0.82),
+      workshopTableMaterial
+    );
+    tableTop.position.y = 0.78;
+    sala2Workshop.add(tableTop);
+
+    [[-0.60, -0.27], [0.60, -0.27], [-0.60, 0.27], [0.60, 0.27]].forEach(([x, z]) => {
+      const leg = new THREE.Mesh(
+        new THREE.BoxGeometry(0.10, 0.72, 0.10),
+        workshopTableMaterial
+      );
+      leg.position.set(x, 0.38, z);
+      sala2Workshop.add(leg);
+    });
+
+    const woodBlock = new THREE.Mesh(
+      new THREE.BoxGeometry(0.48, 0.30, 0.34),
+      workshopWoodMaterial
+    );
+    woodBlock.position.set(-0.34, 0.99, 0.02);
+    sala2Workshop.add(woodBlock);
+
+    const carvedBlock = new THREE.Mesh(
+      new THREE.BoxGeometry(0.42, 0.30, 0.30),
+      workshopWoodMaterial
+    );
+    carvedBlock.position.set(0.34, 0.99, 0.02);
+    carvedBlock.rotation.y = -0.20;
+    sala2Workshop.add(carvedBlock);
+
+    const gouge = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.028, 0.045, 0.62, 14),
+      workshopMetalMaterial
+    );
+    gouge.rotation.z = Math.PI / 2.8;
+    gouge.position.set(0.03, 1.00, 0.23);
+    sala2Workshop.add(gouge);
+
+    const handle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.065, 0.28, 14),
+      workshopWoodMaterial
+    );
+    handle.rotation.z = Math.PI / 2.8;
+    handle.position.set(-0.14, 1.10, 0.23);
+    sala2Workshop.add(handle);
+
+    const mallet = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.12, 0.28),
+      workshopWoodMaterial
+    );
+    mallet.position.set(0.62, 0.98, -0.22);
+    mallet.rotation.y = 0.25;
+    sala2Workshop.add(mallet);
+
+    const malletHandle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12),
+      workshopWoodMaterial
+    );
+    malletHandle.position.set(0.62, 0.82, -0.22);
+    malletHandle.rotation.z = 0.12;
+    sala2Workshop.add(malletHandle);
+
+    sala2Workshop.position.set(
+      gridToWorld(15, 4).x,
+      0,
+      gridToWorld(15, 4).z
+    );
+
+    const sala2WorkshopHalfX = 1.65 / 2 + 0.10;
+    const sala2WorkshopHalfZ = 0.82 / 2 + 0.10;
+    solidExhibits.push({
+      minX: sala2Workshop.position.x - sala2WorkshopHalfX,
+      maxX: sala2Workshop.position.x + sala2WorkshopHalfX,
+      minZ: sala2Workshop.position.z - sala2WorkshopHalfZ,
+      maxZ: sala2Workshop.position.z + sala2WorkshopHalfZ
+    });
+
+    sala2Workshop.userData.museum = {
+      titulo: 'El taller',
+      autor: 'Herramientas y materia',
+      descripcion: 'La mesa reúne algunos elementos que ayudan a imaginar el trabajo manual de un taller: madera, una pieza tallada, una gubia y un mazo.',
+      curiosidad: 'Pulsa sobre el taller para descubrir qué papel tiene cada elemento en el proceso de creación.'
+    };
+
+    scene.add(sala2Workshop);
+    vestibuleInteractive.push(sala2Workshop);
+
+    // Pequeñas piezas informativas independientes sobre la mesa.
+    const sala2Wood = new THREE.Mesh(
+      new THREE.BoxGeometry(0.40, 0.40, 0.40),
+      workshopWoodMaterial
+    );
+    sala2Wood.position.set(
+      sala2Workshop.position.x - 0.34,
+      1.15,
+      sala2Workshop.position.z + 0.02
+    );
+    sala2Wood.userData.museum = {
+      titulo: 'La madera',
+      autor: 'Materia prima',
+      descripcion: 'La madera es el soporte material sobre el que el tallista puede construir formas, relieves y ornamentación.',
+      curiosidad: 'Antes de convertirse en una obra, una pieza de madera es materia que debe ser seleccionada, preparada y trabajada.'
+    };
+    scene.add(sala2Wood);
+    vestibuleInteractive.push(sala2Wood);
+
+    const sala2Gouge = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.028, 0.045, 0.58, 14),
+      workshopMetalMaterial
+    );
+    sala2Gouge.rotation.z = Math.PI / 2.8;
+    sala2Gouge.position.set(
+      sala2Workshop.position.x + 0.03,
+      1.18,
+      sala2Workshop.position.z + 0.23
+    );
+    sala2Gouge.userData.museum = {
+      titulo: 'La gubia',
+      autor: 'Herramienta de talla',
+      descripcion: 'La gubia permite retirar pequeñas cantidades de madera y crear relieves, curvas y detalles ornamentales.',
+      curiosidad: 'La herramienta y la mano trabajan juntas: la precisión del corte determina la forma que adquiere la madera.'
+    };
+    scene.add(sala2Gouge);
+    vestibuleInteractive.push(sala2Gouge);
+
+    // ------------------------------------------------------------
     // MUSEO · PRIMERA PIEZA
     // ------------------------------------------------------------
 
