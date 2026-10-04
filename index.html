@@ -11,7 +11,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #07111f;
+      background: #2B1720;
       font-family: Arial, Helvetica, sans-serif;
     }
     #info {
@@ -31,13 +31,13 @@
     #info strong {
       display: block;
       margin-bottom: 7px;
-      color: #f08a3c;
+      color: #B58A5A;
       font-size: 17px;
     }
     #info span {
       display: block;
       margin-top: 4px;
-      color: #dce8f5;
+      color: #E7D8BF;
       font-size: 13px;
       line-height: 1.4;
     }
@@ -70,12 +70,12 @@
     }
     #museum-panel h2 {
       margin: 0 0 8px;
-      color: #f08a3c;
+      color: #B58A5A;
       font-size: 22px;
     }
     #museum-panel p {
       margin: 7px 0;
-      color: #dce8f5;
+      color: #E7D8BF;
       line-height: 1.5;
       font-size: 14px;
     }
@@ -84,8 +84,8 @@
       padding: 9px 14px;
       border: 0;
       border-radius: 9px;
-      background: #f08a3c;
-      color: #07111f;
+      background: #B58A5A;
+      color: #2B1720;
       font-weight: bold;
       cursor: pointer;
     }
@@ -139,8 +139,8 @@
     import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x07111f);
-    scene.fog = new THREE.Fog(0x07111f, 10, 34);
+    scene.background = new THREE.Color(0x2B1720);
+    scene.fog = new THREE.Fog(0x2B1720, 10, 34);
 
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -166,9 +166,9 @@
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(VRButton.createButton(renderer));
 
-    scene.add(new THREE.HemisphereLight(0xbad8ff, 0x182234, 1.8));
+    scene.add(new THREE.HemisphereLight(0xF1E5D2, 0x3B2029, 1.8));
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const mainLight = new THREE.DirectionalLight(0xF5EFE5, 2.2);
     mainLight.position.set(4, 9, 3);
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.set(1024, 1024);
@@ -218,19 +218,19 @@
     }
 
     const wallMaterial = new THREE.MeshStandardMaterial({
-      color: 0x24415f,
+      color: 0x6B2D3E,
       roughness: 0.78,
       metalness: 0.08
     });
 
     const obstacleMaterial = new THREE.MeshStandardMaterial({
-      color: 0xe36b32,
+      color: 0xB58A5A,
       roughness: 0.6,
       metalness: 0.12
     });
 
     const floorMaterial = new THREE.MeshStandardMaterial({
-      color: 0x101c2d,
+      color: 0x5B2939,
       roughness: 0.92,
       metalness: 0.02
     });
@@ -341,9 +341,9 @@
       return new THREE.CanvasTexture(canvas);
     }
 
-    function createSignTexture(title, subtitle, accent = '#f08a3c') {
+    function createSignTexture(title, subtitle, accent = '#B58A5A') {
       return createCanvasTexture(768, 300, (ctx, w, h) => {
-        ctx.fillStyle = '#0b1728';
+        ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = accent;
@@ -351,7 +351,7 @@
         ctx.strokeRect(18, 18, w - 36, h - 36);
 
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#f5f8fb';
+        ctx.fillStyle = '#F5EFE5';
         ctx.font = 'bold 46px Arial';
         ctx.fillText(title, w / 2, 125);
 
@@ -359,7 +359,7 @@
         ctx.font = 'bold 24px Arial';
         ctx.fillText(subtitle, w / 2, 180);
 
-        ctx.fillStyle = '#9eb1c4';
+        ctx.fillStyle = '#CDBFA8';
         ctx.font = '18px Arial';
         ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 230);
       });
@@ -397,21 +397,21 @@
 
     // Gran título de bienvenida, centrado en el eje del vestíbulo.
     const heroTexture = createCanvasTexture(1200, 500, (ctx, w, h) => {
-      ctx.fillStyle = '#0b1728';
+      ctx.fillStyle = '#4A1F2D';
       ctx.fillRect(0, 0, w, h);
 
       const gradient = ctx.createLinearGradient(0, 0, w, h);
       gradient.addColorStop(0, '#183552');
-      gradient.addColorStop(1, '#0b1728');
+      gradient.addColorStop(1, '#4A1F2D');
       ctx.fillStyle = gradient;
       ctx.fillRect(24, 24, w - 48, h - 48);
 
-      ctx.strokeStyle = '#f08a3c';
+      ctx.strokeStyle = '#B58A5A';
       ctx.lineWidth = 8;
       ctx.strokeRect(24, 24, w - 48, h - 48);
 
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#f08a3c';
+      ctx.fillStyle = '#B58A5A';
       ctx.font = 'bold 32px Arial';
       ctx.fillText('40.º ANIVERSARIO', w / 2, 120);
 
@@ -419,7 +419,7 @@
       ctx.font = 'bold 76px Arial';
       ctx.fillText('IES ANDRÉS BENÍTEZ', w / 2, 215);
 
-      ctx.fillStyle = '#dce8f5';
+      ctx.fillStyle = '#E7D8BF';
       ctx.font = '28px Arial';
       ctx.fillText('EL LEGADO DE ANDRÉS BENÍTEZ', w / 2, 285);
 
@@ -430,7 +430,7 @@
       ctx.lineTo(900, 330);
       ctx.stroke();
 
-      ctx.fillStyle = '#9eb1c4';
+      ctx.fillStyle = '#CDBFA8';
       ctx.font = '22px Arial';
       ctx.fillText('MUSEO VIRTUAL · UN RECORRIDO POR LA HISTORIA', w / 2, 385);
     });
@@ -449,9 +449,9 @@
 
     // Línea temporal centrada bajo el título.
     const timelineTexture = createCanvasTexture(1200, 300, (ctx, w, h) => {
-      ctx.fillStyle = '#101c2d';
+      ctx.fillStyle = '#5B2939';
       ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = '#f08a3c';
+      ctx.strokeStyle = '#B58A5A';
       ctx.lineWidth = 5;
       ctx.beginPath();
       ctx.moveTo(120, 150);
@@ -464,14 +464,14 @@
 
       ctx.textAlign = 'center';
       xs.forEach((x, i) => {
-        ctx.fillStyle = '#f08a3c';
+        ctx.fillStyle = '#B58A5A';
         ctx.beginPath();
         ctx.arc(x, 150, 13, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 32px Arial';
         ctx.fillText(years[i], x, 95);
-        ctx.fillStyle = '#9eb1c4';
+        ctx.fillStyle = '#CDBFA8';
         ctx.font = '20px Arial';
         ctx.fillText(labels[i], x, 205);
       });
@@ -529,7 +529,7 @@
     scene.add(frameGroup);
 
     const frameMaterial = new THREE.MeshStandardMaterial({
-      color: 0xb88942,
+      color: 0xB58A5A,
       roughness: 0.48,
       metalness: 0.18
     });
@@ -563,13 +563,13 @@
     labelCanvas.height = 128;
 
     const labelContext = labelCanvas.getContext('2d');
-    labelContext.fillStyle = '#101c2d';
+    labelContext.fillStyle = '#5B2939';
     labelContext.fillRect(0, 0, 512, 128);
     labelContext.fillStyle = '#ffffff';
     labelContext.font = 'bold 22px Arial';
     labelContext.fillText('ANDRÉS BENÍTEZ Y PEREA', 20, 48);
     labelContext.font = '16px Arial';
-    labelContext.fillStyle = '#f08a3c';
+    labelContext.fillStyle = '#B58A5A';
     labelContext.fillText('RETABLO DE LAS ÁNIMAS · ARCOS DE LA FRONTERA', 20, 88);
 
     const labelTexture = new THREE.CanvasTexture(labelCanvas);
