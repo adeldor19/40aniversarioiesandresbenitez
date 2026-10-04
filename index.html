@@ -404,30 +404,39 @@
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       draw(ctx, width, height);
-      return new THREE.CanvasTexture(canvas);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      texture.needsUpdate = true;
+      return texture;
     }
 
     function createSignTexture(title, subtitle, accent = '#B58A5A') {
-      return createCanvasTexture(768, 300, (ctx, w, h) => {
+      return createCanvasTexture(1536, 600, (ctx, w, h) => {
         ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = accent;
         ctx.lineWidth = 8;
-        ctx.strokeRect(18, 18, w - 36, h - 36);
+        ctx.strokeRect(24, 24, w - 48, h - 48);
 
         ctx.textAlign = 'center';
         ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 46px Arial';
-        ctx.fillText(title, w / 2, 125);
+        ctx.font = 'bold 92px Arial';
+        ctx.fillText(title, w / 2, 250);
 
         ctx.fillStyle = accent;
-        ctx.font = 'bold 24px Arial';
-        ctx.fillText(subtitle, w / 2, 180);
+        ctx.font = 'bold 48px Arial';
+        ctx.fillText(subtitle, w / 2, 360);
 
         ctx.fillStyle = '#CDBFA8';
-        ctx.font = '18px Arial';
-        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 230);
+        ctx.font = '36px Arial';
+        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 460);
       });
     }
 
@@ -462,7 +471,7 @@
     }
 
     // Gran título de bienvenida, centrado en el eje del vestíbulo.
-    const heroTexture = createCanvasTexture(1200, 500, (ctx, w, h) => {
+    const heroTexture = createCanvasTexture(2400, 1000, (ctx, w, h) => {
       ctx.fillStyle = '#4A1F2D';
       ctx.fillRect(0, 0, w, h);
 
@@ -473,32 +482,32 @@
       ctx.fillRect(24, 24, w - 48, h - 48);
 
       ctx.strokeStyle = '#B58A5A';
-      ctx.lineWidth = 8;
-      ctx.strokeRect(24, 24, w - 48, h - 48);
+      ctx.lineWidth = 10;
+      ctx.strokeRect(48, 48, w - 96, h - 96);
 
       ctx.textAlign = 'center';
       ctx.fillStyle = '#B58A5A';
-      ctx.font = 'bold 32px Arial';
-      ctx.fillText('40.º ANIVERSARIO', w / 2, 120);
+      ctx.font = 'bold 64px Arial';
+      ctx.fillText('40.º ANIVERSARIO', w / 2, 240);
 
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 76px Arial';
-      ctx.fillText('IES ANDRÉS BENÍTEZ', w / 2, 215);
+      ctx.font = 'bold 152px Arial';
+      ctx.fillText('IES ANDRÉS BENÍTEZ', w / 2, 430);
 
       ctx.fillStyle = '#E7D8BF';
-      ctx.font = '28px Arial';
-      ctx.fillText('EL LEGADO DE ANDRÉS BENÍTEZ', w / 2, 285);
+      ctx.font = '56px Arial';
+      ctx.fillText('EL LEGADO DE ANDRÉS BENÍTEZ', w / 2, 570);
 
       ctx.strokeStyle = '#54708d';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 6;
       ctx.beginPath();
-      ctx.moveTo(300, 330);
-      ctx.lineTo(900, 330);
+      ctx.moveTo(600, 660);
+      ctx.lineTo(1800, 660);
       ctx.stroke();
 
       ctx.fillStyle = '#CDBFA8';
-      ctx.font = '22px Arial';
-      ctx.fillText('MUSEO VIRTUAL · UN RECORRIDO POR LA HISTORIA', w / 2, 385);
+      ctx.font = '44px Arial';
+      ctx.fillText('MUSEO VIRTUAL · UN RECORRIDO POR LA HISTORIA', w / 2, 770);
     });
 
     const heroPanel = new THREE.Mesh(
@@ -515,35 +524,35 @@
 
     // Línea temporal centrada bajo el título.
     const timelineWidth = 2.40;
-    const timelineTexture = createCanvasTexture(1200, 300, (ctx, w, h) => {
+    const timelineTexture = createCanvasTexture(2400, 600, (ctx, w, h) => {
       ctx.fillStyle = '#5B2939';
       ctx.fillRect(0, 0, w, h);
 
       ctx.strokeStyle = '#B58A5A';
       ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(120, 155);
-      ctx.lineTo(1080, 155);
+      ctx.moveTo(240, 310);
+      ctx.lineTo(2160, 310);
       ctx.stroke();
 
       const years = ['1725', '1786', '1986', '2026'];
       const labels = ['Nace', 'Fallece', 'Nace el IES', '40.º aniversario'];
-      const xs = [120, 440, 760, 1080];
+      const xs = [240, 880, 1520, 2160];
 
       ctx.textAlign = 'center';
       xs.forEach((x, i) => {
         ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 30px Arial';
-        ctx.fillText(years[i], x, 88);
+        ctx.font = 'bold 60px Arial';
+        ctx.fillText(years[i], x, 176);
 
         ctx.fillStyle = '#B58A5A';
         ctx.beginPath();
-        ctx.arc(x, 155, 10, 0, Math.PI * 2);
+        ctx.arc(x, 310, 18, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#CDBFA8';
-        ctx.font = '18px Arial';
-        ctx.fillText(labels[i], x, 222);
+        ctx.font = '36px Arial';
+        ctx.fillText(labels[i], x, 444);
       });
     });
 
@@ -594,66 +603,67 @@
     // ------------------------------------------------------------
 
     function createInfoTexture(title, lines, accent = '#B58A5A') {
-      return createCanvasTexture(900, 520, (ctx, w, h) => {
+      return createCanvasTexture(1800, 1000, (ctx, w, h) => {
         ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = accent;
-        ctx.lineWidth = 6;
-        ctx.strokeRect(22, 22, w - 44, h - 44);
+        ctx.lineWidth = 8;
+        ctx.strokeRect(36, 36, w - 72, h - 72);
 
         ctx.textAlign = 'center';
         ctx.fillStyle = accent;
-        ctx.font = 'bold 34px Arial';
-        ctx.fillText(title, w / 2, 88);
+        ctx.font = 'bold 68px Arial';
+        ctx.fillText(title, w / 2, 128);
 
         ctx.strokeStyle = '#8B5A68';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(170, 118);
-        ctx.lineTo(730, 118);
+        ctx.moveTo(280, 168);
+        ctx.lineTo(1520, 168);
         ctx.stroke();
 
-        ctx.textAlign = 'center';
         ctx.fillStyle = '#F5EFE5';
 
         const visibleLines = lines.filter(Boolean);
-        const lineHeight = visibleLines.length >= 7 ? 36 : 40;
-        const startY = 165;
+        const lineHeight = visibleLines.length >= 7 ? 78 : visibleLines.length >= 5 ? 88 : 96;
+        const totalHeight = (visibleLines.length - 1) * lineHeight;
+        const startY = Math.max(250, Math.min(390, 520 - totalHeight / 2));
 
         visibleLines.forEach((line, index) => {
-          ctx.font = (line.length > 34 ? '22px Arial' : '24px Arial');
+          ctx.font = line.length > 40 ? '42px Arial' : '46px Arial';
           ctx.fillText(line, w / 2, startY + index * lineHeight);
         });
       });
     }
 
     function createQuestionTexture(title, lines) {
-      return createCanvasTexture(900, 520, (ctx, w, h) => {
+      return createCanvasTexture(1800, 1000, (ctx, w, h) => {
         ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = '#B58A5A';
-        ctx.lineWidth = 6;
-        ctx.strokeRect(22, 22, w - 44, h - 44);
+        ctx.lineWidth = 8;
+        ctx.strokeRect(36, 36, w - 72, h - 72);
 
         ctx.textAlign = 'center';
         ctx.fillStyle = '#B58A5A';
-        ctx.font = 'bold 38px Arial';
-        ctx.fillText(title, w / 2, 92);
+        ctx.font = 'bold 76px Arial';
+        ctx.fillText(title, w / 2, 140);
 
         ctx.strokeStyle = '#8B5A68';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(205, 120);
-        ctx.lineTo(695, 120);
+        ctx.moveTo(410, 180);
+        ctx.lineTo(1390, 180);
         ctx.stroke();
 
         ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 28px Arial';
+        ctx.font = 'bold 56px Arial';
         const visibleLines = lines.filter(Boolean);
-        const lineHeight = 48;
-        const startY = 185;
+        const lineHeight = 96;
+        const totalHeight = (visibleLines.length - 1) * lineHeight;
+        const startY = 560 - totalHeight / 2;
 
         visibleLines.forEach((line, index) => {
           ctx.fillText(line, w / 2, startY + index * lineHeight);
@@ -831,7 +841,7 @@
 
     const logoLabelTexture = new THREE.CanvasTexture(logoLabelCanvas);
     logoLabelTexture.colorSpace = THREE.SRGBColorSpace;
-    logoLabelTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    logoLabelTexture.minFilter = THREE.LinearFilter;
     logoLabelTexture.magFilter = THREE.LinearFilter;
     logoLabelTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     logoLabelTexture.needsUpdate = true;
@@ -981,7 +991,7 @@
     ];
 
     const timelineHotspots = [];
-    const timelineX = [120, 440, 760, 1080];
+    const timelineX = [240, 880, 1520, 2160];
     timelineX.forEach((x, index) => {
       const hotspot = new THREE.Mesh(
         new THREE.CircleGeometry(0.045, 24),
@@ -1027,14 +1037,15 @@
 
     const frameGroup = new THREE.Group();
 
-    // Primera pieza: pared interior de la Sala 4 · SUS OBRAS.
-    const museumWall = gridToWorld(29, 2);
+    // Primera pieza: pared interior de la Sala 3 · SUS OBRAS.
+    // Se fija en la cara oeste del muro 23, dentro de la Sala 3.
+    const museumWall = gridToWorld(23, 2);
     frameGroup.position.set(
-      museumWall.x + CELL_SIZE / 2 + 0.055,
+      museumWall.x - CELL_SIZE / 2 - 0.055,
       1.48,
       museumWall.z
     );
-    frameGroup.rotation.y = Math.PI / 2;
+    frameGroup.rotation.y = -Math.PI / 2;
     scene.add(frameGroup);
 
     const frameMaterial = new THREE.MeshStandardMaterial({
@@ -1068,20 +1079,26 @@
     frameGroup.add(artwork);
 
     const labelCanvas = document.createElement('canvas');
-    labelCanvas.width = 512;
-    labelCanvas.height = 128;
+    labelCanvas.width = 1600;
+    labelCanvas.height = 260;
 
     const labelContext = labelCanvas.getContext('2d');
     labelContext.fillStyle = '#5B2939';
-    labelContext.fillRect(0, 0, 512, 128);
+    labelContext.fillRect(0, 0, 1600, 260);
+    labelContext.textAlign = 'center';
+    labelContext.textBaseline = 'middle';
     labelContext.fillStyle = '#ffffff';
-    labelContext.font = 'bold 22px Arial';
-    labelContext.fillText('ANDRÉS BENÍTEZ Y PEREA', 20, 48);
-    labelContext.font = '16px Arial';
+    labelContext.font = 'bold 54px Arial';
+    labelContext.fillText('ANDRÉS BENÍTEZ Y PEREA', 800, 86);
     labelContext.fillStyle = '#B58A5A';
-    labelContext.fillText('RETABLO DE LAS ÁNIMAS · ARCOS DE LA FRONTERA', 20, 88);
+    labelContext.font = '36px Arial';
+    labelContext.fillText('RETABLO DE LAS ÁNIMAS · ARCOS DE LA FRONTERA', 800, 174);
 
     const labelTexture = new THREE.CanvasTexture(labelCanvas);
+    labelTexture.colorSpace = THREE.SRGBColorSpace;
+    labelTexture.minFilter = THREE.LinearFilter;
+    labelTexture.magFilter = THREE.LinearFilter;
+    labelTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
     const label = new THREE.Mesh(
       new THREE.PlaneGeometry(0.78, 0.20),
