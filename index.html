@@ -681,17 +681,26 @@
     ], 'z-', 1.72, 0.98);
 
     // Logo del IES: lienzo cuadrado grande en la pared principal del vestíbulo.
-    const logoFrame = new THREE.Mesh(
-      new THREE.BoxGeometry(1.28, 1.28, 0.08),
+    const logoFrameOuter = new THREE.Mesh(
+      new THREE.BoxGeometry(1.48, 1.48, 0.10),
+      new THREE.MeshStandardMaterial({
+        color: 0x5B2939,
+        roughness: 0.72,
+        metalness: 0.02
+      })
+    );
+
+    const logoFrameInner = new THREE.Mesh(
+      new THREE.BoxGeometry(1.34, 1.34, 0.06),
       new THREE.MeshStandardMaterial({
         color: 0xB58A5A,
-        roughness: 0.5,
+        roughness: 0.48,
         metalness: 0.08
       })
     );
 
     const logoCanvas = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.16, 1.16),
+      new THREE.PlaneGeometry(1.20, 1.20),
       new THREE.MeshBasicMaterial({
         color: 0xF5EFE5,
         side: THREE.DoubleSide
@@ -713,19 +722,25 @@
     );
 
     const logoWall = gridToWorld(3, 8);
-    logoFrame.position.set(
+    logoFrameOuter.position.set(
       logoWall.x,
       1.68,
       logoWall.z + CELL_SIZE / 2 + 0.035
     );
+    logoFrameInner.position.set(
+      logoWall.x,
+      1.68,
+      logoWall.z + CELL_SIZE / 2 + 0.090
+    );
     logoCanvas.position.set(
       logoWall.x,
       1.68,
-      logoWall.z + CELL_SIZE / 2 + 0.082
+      logoWall.z + CELL_SIZE / 2 + 0.125
     );
 
     const logoGroup = new THREE.Group();
-    logoGroup.add(logoFrame);
+    logoGroup.add(logoFrameOuter);
+    logoGroup.add(logoFrameInner);
     logoGroup.add(logoCanvas);
     logoGroup.userData.museum = {
       titulo: 'IES ANDRÉS BENÍTEZ',
@@ -806,7 +821,7 @@
       'entre un artista del siglo XVIII',
       'y un instituto del siglo XXI?',
       'La respuesta está al final.'
-    ], 'x-', 1.00, 0.82);
+    ], 'x-', 0.76, 0.58);
     questionPanel.userData.museum = {
       titulo: 'Una pregunta para empezar',
       autor: 'Reto del visitante',
