@@ -766,26 +766,37 @@
     logoGroup.add(logoFrame);
     logoGroup.add(logoCanvas);
 
-    // Cartela inferior, igual que en las obras del museo.
+    // Cartela inferior en alta resolución para evitar pixelación.
     const logoLabelCanvas = document.createElement('canvas');
-    logoLabelCanvas.width = 512;
-    logoLabelCanvas.height = 128;
+    logoLabelCanvas.width = 1480;
+    logoLabelCanvas.height = 200;
 
     const logoLabelContext = logoLabelCanvas.getContext('2d');
     logoLabelContext.fillStyle = '#5B2939';
-    logoLabelContext.fillRect(0, 0, 512, 128);
-    logoLabelContext.fillStyle = '#ffffff';
-    logoLabelContext.font = 'bold 24px Arial';
+    logoLabelContext.fillRect(0, 0, 1480, 200);
+
     logoLabelContext.textAlign = 'center';
-    logoLabelContext.fillText('IES ANDRÉS BENÍTEZ', 256, 50);
-    logoLabelContext.font = '18px Arial';
+    logoLabelContext.textBaseline = 'middle';
+
+    logoLabelContext.fillStyle = '#ffffff';
+    logoLabelContext.font = 'bold 46px Arial';
+    logoLabelContext.fillText('IES ANDRÉS BENÍTEZ', 740, 76);
+
     logoLabelContext.fillStyle = '#B58A5A';
-    logoLabelContext.fillText('40.º ANIVERSARIO · 1986–2026', 256, 91);
+    logoLabelContext.font = '32px Arial';
+    logoLabelContext.fillText('40.º ANIVERSARIO · 1986–2026', 740, 143);
+
+    const logoLabelTexture = new THREE.CanvasTexture(logoLabelCanvas);
+    logoLabelTexture.colorSpace = THREE.SRGBColorSpace;
+    logoLabelTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    logoLabelTexture.magFilter = THREE.LinearFilter;
+    logoLabelTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    logoLabelTexture.needsUpdate = true;
 
     const logoLabel = new THREE.Mesh(
       new THREE.PlaneGeometry(1.48, 0.20),
       new THREE.MeshBasicMaterial({
-        map: new THREE.CanvasTexture(logoLabelCanvas),
+        map: logoLabelTexture,
         side: THREE.DoubleSide
       })
     );
