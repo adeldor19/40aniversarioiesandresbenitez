@@ -437,13 +437,12 @@
       new THREE.PlaneGeometry(2.15, 0.90),
       new THREE.MeshBasicMaterial({ map: heroTexture, side: THREE.DoubleSide })
     );
-    const heroWall = gridToWorld(0, 6);
+    const heroWall = gridToWorld(3, 0);
     heroPanel.position.set(
-      heroWall.x + CELL_SIZE / 2 + 0.045,
+      heroWall.x,
       1.85,
-      heroWall.z
+      heroWall.z + CELL_SIZE / 2 + 0.045
     );
-    heroPanel.rotation.y = Math.PI / 2;
     scene.add(heroPanel);
 
     // Línea temporal centrada bajo el título.
@@ -481,11 +480,10 @@
       new THREE.MeshBasicMaterial({ map: timelineTexture, side: THREE.DoubleSide })
     );
     timelinePanel.position.set(
-      heroWall.x + CELL_SIZE / 2 + 0.045,
+      heroWall.x,
       0.78,
-      heroWall.z
+      heroWall.z + CELL_SIZE / 2 + 0.045
     );
-    timelinePanel.rotation.y = Math.PI / 2;
     scene.add(timelinePanel);
 
     // Señalización de recorrido: cada tramo anuncia la sala que viene.
