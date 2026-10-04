@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>40º Aniversario · IES Andrés Benítez</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #07111f;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    #info {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      max-width: 360px;
+      padding: 14px 16px;
+      color: white;
+      background: rgba(5, 12, 24, .84);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
+    #info strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #f08a3c;
+      font-size: 17px;
+    }
+    #info span {
+      display: block;
+      margin-top: 4px;
+      color: #dce8f5;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    #crosshair {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      margin: -4px;
+      z-index: 5;
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    #museum-panel {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      width: min(520px, calc(100vw - 40px));
+      padding: 22px;
+      color: white;
+      background: rgba(7, 17, 31, .94);
+      border: 1px solid rgba(240, 138, 60, .5);
+      border-radius: 16px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.55);
+      display: none;
+    }
+    #museum-panel h2 {
+      margin: 0 0 8px;
+      color: #f08a3c;
+      font-size: 22px;
+    }
+    #museum-panel p {
+      margin: 7px 0;
+      color: #dce8f5;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    #museum-close {
+      margin-top: 14px;
+      padding: 9px 14px;
+      border: 0;
+      border-radius: 9px;
+      background: #f08a3c;
+      color: #07111f;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #message {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      z-index: 10;
+      padding: 9px 14px;
+      color: white;
+      background: rgba(5, 12, 24, .72);
+      border-radius: 999px;
+      font-size: 12px;
+      pointer-events: none;
+    }
+    canvas { display: block; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="info">
+    <strong>40º ANIVERSARIO · IES ANDRÉS BENÍTEZ</strong>
+    <span>Proyecto VR · El legado de Andrés Benítez</span>
+    <span>Colisiones: ACTIVADAS</span>
+    <span>PC: WASD + ratón · VR: joystick izquierdo</span>
+  </div>
+
+  <div id="crosshair"></div>
+
+  <div id="museum-panel">
+    <h2 id="museum-title"></h2>
+    <p id="museum-author"></p>
+    <p id="museum-description"></p>
+    <p id="museum-curiosity"></p>
+    <button id="museum-close">Cerrar</button>
+  </div>
+
+  <div id="message">Haz clic en la escena para mirar con el ratón</div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { VRButton } from 'three/addons/webxr/VRButton.js';
+    import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x07111f);
+    scene.fog = new THREE.Fog(0x07111f, 10, 34);
+
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.05,
+      100
+    );
+    camera.position.set(0, 1.6, 0);
+
+    const dolly = new THREE.Group();
+    dolly.add(camera);
+    scene.add(dolly);
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = true;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
+    document.body.appendChild(VRButton.createButton(renderer));
+
+    scene.add(new THREE.HemisphereLight(0xbad8ff, 0x182234, 1.8));
+
+    const mainLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    mainLight.position.set(4, 9, 3);
+    mainLight.castShadow = true;
+    mainLight.shadow.mapSize.set(1024, 1024);
+    mainLight.shadow.camera.left = -12;
+    mainLight.shadow.camera.right = 12;
+    mainLight.shadow.camera.top = 12;
+    mainLight.shadow.camera.bottom = -12;
+    scene.add(mainLight);
+
+    const CELL_SIZE = 1.4;
+    const grid = [
+      "###############",
+      "#.............#",
+      "#..###........#",
+      "#........###..#",
+      "#..#..........#",
+      "#..#..####....#",
+      "#.....#.......#",
+      "#.....#..###..#",
+      "#.............#",
+      "#.............#",
+      "###############"
+    ];
+
+    const GH = grid.length;
+    const GW = grid[0].length;
+    const PLAYER_RADIUS = 0.30;
+    const WALL_HEIGHT = 3.6;
+
+    function gridToWorld(gx, gy) {
+      return {
+        x: (gx - (GW - 1) / 2) * CELL_SIZE,
+        z: (gy - (GH - 1) / 2) * CELL_SIZE
+      };
+    }
+
+    function worldToGridApprox(x, z) {
+      return {
+        gx: Math.round(x / CELL_SIZE + (GW - 1) / 2),
+        gy: Math.round(z / CELL_SIZE + (GH - 1) / 2)
+      };
+    }
+
+    const wallMaterial = new THREE.MeshStandardMaterial({
+      color: 0x24415f,
+      roughness: 0.78,
+      metalness: 0.08
+    });
+
+    const obstacleMaterial = new THREE.MeshStandardMaterial({
+      color: 0xe36b32,
+      roughness: 0.6,
+      metalness: 0.12
+    });
+
+    const floorMaterial = new THREE.MeshStandardMaterial({
+      color: 0x101c2d,
+      roughness: 0.92,
+      metalness: 0.02
+    });
+
+    const wallGeometry = new THREE.BoxGeometry(
+      CELL_SIZE,
+      WALL_HEIGHT,
+      CELL_SIZE
+    );
+
+    const obstacleGeometry = new THREE.BoxGeometry(
+      CELL_SIZE,
+      1.8,
+      CELL_SIZE
+    );
+
+    const floor = new THREE.Mesh(
+      new THREE.BoxGeometry(GW * CELL_SIZE, 0.15, GH * CELL_SIZE),
+      floorMaterial
+    );
+    floor.position.y = -0.08;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    for (let gy = 0; gy < GH; gy++) {
+      for (let gx = 0; gx < GW; gx++) {
+        if (grid[gy][gx] !== '#') continue;
+
+        const p = gridToWorld(gx, gy);
+        const isOuterWall =
+          gx === 0 || gy === 0 || gx === GW - 1 || gy === GH - 1;
+
+        const mesh = new THREE.Mesh(
+          isOuterWall ? wallGeometry : obstacleGeometry,
+          isOuterWall ? wallMaterial : obstacleMaterial
+        );
+
+        mesh.position.set(
+          p.x,
+          isOuterWall ? WALL_HEIGHT / 2 : 0.9,
+          p.z
+        );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        scene.add(mesh);
+      }
+    }
+
+    const gridHelper = new THREE.GridHelper(
+      GW * CELL_SIZE,
+      GW,
+      0x31506e,
+      0x1b2c40
+    );
+    gridHelper.position.y = 0.01;
+    scene.add(gridHelper);
+
+    function isFree(x, z, radius) {
+      const { gx, gy } = worldToGridApprox(x, z);
+
+      for (let oy = -1; oy <= 1; oy++) {
+        for (let ox = -1; ox <= 1; ox++) {
+          const cx = gx + ox;
+          const cy = gy + oy;
+
+          if (cx < 0 || cy < 0 || cx >= GW || cy >= GH) continue;
+          if (grid[cy][cx] !== '#') continue;
+
+          const w = gridToWorld(cx, cy);
+          const half = CELL_SIZE / 2;
+
+          const closestX = Math.max(
+            w.x - half,
+            Math.min(x, w.x + half)
+          );
+
+          const closestZ = Math.max(
+            w.z - half,
+            Math.min(z, w.z + half)
+          );
+
+          const dx = x - closestX;
+          const dz = z - closestZ;
+
+          if (dx * dx + dz * dz < radius * radius) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    function tryMove(pos, dx, dz, radius) {
+      if (isFree(pos.x + dx, pos.z, radius)) {
+        pos.x += dx;
+      }
+      if (isFree(pos.x, pos.z + dz, radius)) {
+        pos.z += dz;
+      }
+    }
+
+    const start = gridToWorld(1, 1);
+    dolly.position.set(start.x, 0, start.z);
+
+    // ------------------------------------------------------------
+    // MUSEO · PRIMERA PIEZA
+    // ------------------------------------------------------------
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    const museumData = {
+      titulo: 'Primer espacio del museo',
+      autor: 'Proyecto 40.º Aniversario · IES Andrés Benítez',
+      descripcion: 'Esta pieza inaugura el museo virtual dedicado a Andrés Benítez. A partir de aquí iremos incorporando su vida, su obra y el contexto histórico de Jerez.',
+      curiosidad: 'El objetivo final es recorrer el museo, descubrir su legado y conectar su historia con los 40 años del instituto.'
+    };
+
+    const frameGroup = new THREE.Group();
+
+    // Celda de pared gx=3, gy=2. La celda situada en +Z es un pasillo.
+    const museumWall = gridToWorld(3, 2);
+    frameGroup.position.set(
+      museumWall.x,
+      1.45,
+      museumWall.z + CELL_SIZE / 2 + 0.025
+    );
+    scene.add(frameGroup);
+
+    const frameMaterial = new THREE.MeshStandardMaterial({
+      color: 0xb88942,
+      roughness: 0.48,
+      metalness: 0.18
+    });
+
+    const artworkMaterial = new THREE.MeshBasicMaterial({
+      color: 0x315f7d
+    });
+
+    const frame = new THREE.Mesh(
+      new THREE.BoxGeometry(0.92, 0.70, 0.10),
+      frameMaterial
+    );
+
+    const artwork = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.76, 0.55),
+      artworkMaterial
+    );
+
+    artwork.position.z = 0.056;
+    artwork.userData.museum = museumData;
+
+    frameGroup.add(frame);
+    frameGroup.add(artwork);
+
+    const labelCanvas = document.createElement('canvas');
+    labelCanvas.width = 512;
+    labelCanvas.height = 128;
+
+    const labelContext = labelCanvas.getContext('2d');
+    labelContext.fillStyle = '#101c2d';
+    labelContext.fillRect(0, 0, 512, 128);
+    labelContext.fillStyle = '#ffffff';
+    labelContext.font = 'bold 22px Arial';
+    labelContext.fillText('PIEZA DE PRUEBA', 20, 48);
+    labelContext.font = '16px Arial';
+    labelContext.fillStyle = '#f08a3c';
+    labelContext.fillText('MUSEO · 40.º ANIVERSARIO', 20, 88);
+
+    const labelTexture = new THREE.CanvasTexture(labelCanvas);
+
+    const label = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.92, 0.23),
+      new THREE.MeshBasicMaterial({ map: labelTexture })
+    );
+
+    label.position.set(0, -0.52, 0.056);
+    frameGroup.add(label);
+
+    function showMuseumPanel(data) {
+      document.getElementById('museum-title').textContent = data.titulo;
+      document.getElementById('museum-author').textContent = data.autor;
+      document.getElementById('museum-description').textContent = data.descripcion;
+      document.getElementById('museum-curiosity').textContent = data.curiosidad;
+      document.getElementById('museum-panel').style.display = 'block';
+    }
+
+    document.getElementById('museum-close').addEventListener('click', () => {
+      document.getElementById('museum-panel').style.display = 'none';
+    });
+
+    renderer.domElement.addEventListener('pointerdown', (event) => {
+      if (renderer.xr.isPresenting) return;
+
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(pointer, camera);
+
+      const hits = raycaster.intersectObject(artwork, false);
+
+      if (hits.length > 0 && artwork.userData.museum) {
+        showMuseumPanel(artwork.userData.museum);
+      }
+    });
+
+    // ------------------------------------------------------------
+    // MOVIMIENTO DE PC
+    // ------------------------------------------------------------
+
+    const keys = new Set();
+    let pointerLocked = false;
+    let yaw = 0;
+    let pitch = 0;
+
+    window.addEventListener('keydown', (event) => keys.add(event.code));
+    window.addEventListener('keyup', (event) => keys.delete(event.code));
+
+    renderer.domElement.addEventListener('click', () => {
+      if (!renderer.xr.isPresenting) {
+        renderer.domElement.requestPointerLock();
+      }
+    });
+
+    document.addEventListener('pointerlockchange', () => {
+      pointerLocked = document.pointerLockElement === renderer.domElement;
+      document.getElementById('message').textContent =
+        pointerLocked
+          ? 'WASD para moverte · ratón para mirar · ESC para liberar el ratón'
+          : 'Haz clic en la escena para mirar con el ratón';
+    });
+
+    document.addEventListener('mousemove', (event) => {
+      if (!pointerLocked || renderer.xr.isPresenting) return;
+
+      yaw -= event.movementX * 0.0022;
+      pitch -= event.movementY * 0.0022;
+
+      const limit = Math.PI / 2 - 0.05;
+      pitch = Math.max(-limit, Math.min(limit, pitch));
+
+      dolly.rotation.y = yaw;
+      camera.rotation.x = pitch;
+    });
+
+    function updateDesktopMovement() {
+      if (renderer.xr.isPresenting) return;
+
+      let forward = 0;
+      let strafe = 0;
+
+      if (keys.has('KeyW') || keys.has('ArrowUp')) forward += 1;
+      if (keys.has('KeyS') || keys.has('ArrowDown')) forward -= 1;
+      if (keys.has('KeyD') || keys.has('ArrowRight')) strafe += 1;
+      if (keys.has('KeyA') || keys.has('ArrowLeft')) strafe -= 1;
+
+      if (forward === 0 && strafe === 0) return;
+
+      const length = Math.hypot(forward, strafe);
+      forward /= length;
+      strafe /= length;
+
+      const speed = 0.075;
+
+      const forwardVector = new THREE.Vector3(
+        -Math.sin(dolly.rotation.y), 0, -Math.cos(dolly.rotation.y)
+      );
+      const rightVector = new THREE.Vector3(
+        Math.cos(dolly.rotation.y), 0, -Math.sin(dolly.rotation.y)
+      );
+
+      const dx =
+        (forwardVector.x * forward + rightVector.x * strafe) * speed;
+      const dz =
+        (forwardVector.z * forward + rightVector.z * strafe) * speed;
+
+      tryMove(dolly.position, dx, dz, PLAYER_RADIUS);
+    }
+
+    // ------------------------------------------------------------
+    // CONTROLES VR
+    // ------------------------------------------------------------
+
+    const controllers = [
+      renderer.xr.getController(0),
+      renderer.xr.getController(1)
+    ];
+
+    const controllerStates = [
+      { inputSource: null },
+      { inputSource: null }
+    ];
+
+    controllers.forEach((controller, index) => {
+      controller.addEventListener('connected', (event) => {
+        controllerStates[index].inputSource = event.data;
+      });
+
+      controller.addEventListener('disconnected', () => {
+        controllerStates[index].inputSource = null;
+      });
+
+      scene.add(controller);
+    });
+
+    const controllerModelFactory = new XRControllerModelFactory();
+
+    const controllerGrips = [
+      renderer.xr.getControllerGrip(0),
+      renderer.xr.getControllerGrip(1)
+    ];
+
+    controllerGrips.forEach((grip) => {
+      grip.add(controllerModelFactory.createControllerModel(grip));
+      scene.add(grip);
+    });
+
+    function updateVRMovement() {
+      if (!renderer.xr.isPresenting) return;
+
+      const inputSources = controllerStates
+        .map(state => state.inputSource)
+        .filter(Boolean);
+
+      const left = inputSources.find(source => source.handedness === 'left');
+      const right = inputSources.find(source => source.handedness === 'right');
+
+      const leftGamepad = left?.gamepad ?? null;
+      const rightGamepad = right?.gamepad ?? null;
+
+      if (leftGamepad && leftGamepad.axes.length >= 4) {
+        const x = leftGamepad.axes[2] ?? leftGamepad.axes[0] ?? 0;
+        const y = leftGamepad.axes[3] ?? leftGamepad.axes[1] ?? 0;
+        const deadZone = 0.15;
+
+        const moveX = Math.abs(x) > deadZone ? x : 0;
+        const moveY = Math.abs(y) > deadZone ? y : 0;
+
+        if (moveX !== 0 || moveY !== 0) {
+          const speed = 0.045;
+
+          const forward = new THREE.Vector3(
+            -Math.sin(dolly.rotation.y), 0, -Math.cos(dolly.rotation.y)
+          );
+          const rightVector = new THREE.Vector3(
+            Math.cos(dolly.rotation.y), 0, -Math.sin(dolly.rotation.y)
+          );
+
+          tryMove(
+            dolly.position,
+            (rightVector.x * moveX + forward.x * -moveY) * speed,
+            (rightVector.z * moveX + forward.z * -moveY) * speed,
+            PLAYER_RADIUS
+          );
+        }
+      }
+
+      if (rightGamepad && rightGamepad.axes.length >= 4) {
+        const x = rightGamepad.axes[2] ?? rightGamepad.axes[0] ?? 0;
+        if (Math.abs(x) > 0.2) {
+          dolly.rotation.y -= x * 0.035;
+        }
+      }
+    }
+
+    const vrRaycaster = new THREE.Raycaster();
+
+    controllers.forEach((controller) => {
+      controller.addEventListener('selectstart', () => {
+        const origin = new THREE.Vector3();
+        const direction = new THREE.Vector3(0, 0, -1);
+
+        controller.getWorldPosition(origin);
+        direction.applyQuaternion(
+          controller.getWorldQuaternion(new THREE.Quaternion())
+        );
+
+        vrRaycaster.set(origin, direction);
+
+        const hits = vrRaycaster.intersectObject(artwork, false);
+
+        if (hits.length > 0 && artwork.userData.museum) {
+          showMuseumPanel(artwork.userData.museum);
+        }
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function render() {
+      updateDesktopMovement();
+      updateVRMovement();
+      renderer.render(scene, camera);
+    }
+
+    renderer.setAnimationLoop(render);
+  </script>
+</body>
+</html>
