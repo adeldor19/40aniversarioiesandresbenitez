@@ -116,7 +116,7 @@
 <body>
   <div id="info">
     <strong>40º ANIVERSARIO · IES ANDRÉS BENÍTEZ</strong>
-    <span>Proyecto VR · El legado de Andrés Benítez</span><span>Sala 1 · ¿Quién fue Andrés Benítez?</span>
+    <span>Proyecto VR · El legado de Andrés Benítez</span><span>Vestíbulo · 40 años de historia</span>
     <span>Colisiones: ACTIVADAS</span>
     <span>PC: WASD + ratón · VR: joystick izquierdo</span>
   </div>
@@ -330,6 +330,121 @@
 
     const start = gridToWorld(1, 1);
     dolly.position.set(start.x, 0, start.z);
+
+    // ------------------------------------------------------------
+    // MUSEO · VESTÍBULO DE ENTRADA
+    // ------------------------------------------------------------
+
+    function createCanvasTexture(width, height, draw) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      draw(ctx, width, height);
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function createEntrancePanel(title, subtitle, accent = '#f08a3c') {
+      const texture = createCanvasTexture(1024, 512, (ctx, w, h) => {
+        ctx.fillStyle = '#0b1728';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 8;
+        ctx.strokeRect(28, 28, w - 56, h - 56);
+
+        ctx.fillStyle = '#f5f8fb';
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 62px Arial';
+        ctx.fillText(title, w / 2, 190);
+
+        ctx.fillStyle = accent;
+        ctx.font = 'bold 32px Arial';
+        ctx.fillText(subtitle, w / 2, 255);
+
+        ctx.fillStyle = '#c9d7e6';
+        ctx.font = '24px Arial';
+        ctx.fillText('1725  →  1786  →  1986  →  2026', w / 2, 350);
+
+        ctx.fillStyle = '#91a6bb';
+        ctx.font = '20px Arial';
+        ctx.fillText('Descubre el legado de un artista jerezano', w / 2, 405);
+      });
+
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.8, 1.4),
+        new THREE.MeshBasicMaterial({ map: texture })
+      );
+
+      return panel;
+    }
+
+    const entranceWall = gridToWorld(1, 0);
+    const entrancePanel = createEntrancePanel(
+      'MUSEO VIRTUAL',
+      'ANDRÉS BENÍTEZ · 40.º ANIVERSARIO'
+    );
+    entrancePanel.position.set(
+      entranceWall.x,
+      2.15,
+      entranceWall.z + CELL_SIZE / 2 + 0.035
+    );
+    entrancePanel.rotation.y = Math.PI;
+    scene.add(entrancePanel);
+
+    const entranceFloor = new THREE.Mesh(
+      new THREE.BoxGeometry(2.2, 0.025, 1.15),
+      new THREE.MeshStandardMaterial({
+        color: 0x17283d,
+        roughness: 0.65,
+        metalness: 0.18
+      })
+    );
+    entranceFloor.position.set(start.x, 0.015, start.z);
+    scene.add(entranceFloor);
+
+    const timelineTexture = createCanvasTexture(768, 220, (ctx, w, h) => {
+      ctx.fillStyle = '#101c2d';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#f08a3c';
+      ctx.font = 'bold 28px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('UNA HISTORIA QUE CONTINÚA', w / 2, 52);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 30px Arial';
+      ctx.fillText('1725', 100, 125);
+      ctx.fillText('1786', 280, 125);
+      ctx.fillText('1986', 488, 125);
+      ctx.fillText('2026', 668, 125);
+
+      ctx.strokeStyle = '#54708d';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(120, 143);
+      ctx.lineTo(648, 143);
+      ctx.stroke();
+
+      ctx.fillStyle = '#a9bbcc';
+      ctx.font = '18px Arial';
+      ctx.fillText('Nace', 100, 180);
+      ctx.fillText('Fallece', 280, 180);
+      ctx.fillText('Nace el instituto', 488, 180);
+      ctx.fillText('40.º aniversario', 668, 180);
+    });
+
+    const timeline = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.35, 0.67),
+      new THREE.MeshBasicMaterial({ map: timelineTexture })
+    );
+    timeline.position.set(
+      gridToWorld(2, 0).x,
+      0.95,
+      gridToWorld(2, 0).z + CELL_SIZE / 2 + 0.04
+    );
+    timeline.rotation.y = Math.PI;
+    scene.add(timeline);
 
     // ------------------------------------------------------------
     // MUSEO · PRIMERA PIEZA
