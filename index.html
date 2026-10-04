@@ -1435,14 +1435,15 @@ vestibuleInteractive.push(questionStand);
       s2_workshopWoodMaterial
     );
     s2_mallet.rotation.z = Math.PI / 2;
-    s2_mallet.position.set(0.62, 0.91, 0.20);
+    s2_mallet.position.set(0.72, 0.91, 0.20);
     sala2Workshop.add(s2_mallet);
 
     const s2_malletHandle = new THREE.Mesh(
       new THREE.CylinderGeometry(0.035, 0.045, 0.46, 14),
       s2_workshopWoodMaterial
     );
-    s2_malletHandle.position.set(0.62, 0.88, 0.20);
+    s2_malletHandle.position.set(0.32, 0.91, 0.20);
+    s2_malletHandle.rotation.z = Math.PI / 2;
     sala2Workshop.add(s2_malletHandle);
 
     sala2Workshop.position.set(
