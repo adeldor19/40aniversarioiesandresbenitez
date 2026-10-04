@@ -713,17 +713,17 @@
       }
     );
 
-    const logoWall = gridToWorld(3, 8);
+    const logoWall = gridToWorld(0, 6);
     logoFrame.position.set(
-      logoWall.x,
+      logoWall.x + CELL_SIZE / 2 + 0.055,
       1.62,
-      logoWall.z + CELL_SIZE / 2 + 0.055
+      logoWall.z
     );
 
     logoCanvas.position.set(
-      logoWall.x,
+      logoWall.x + CELL_SIZE / 2 + 0.102,
       1.62,
-      logoWall.z + CELL_SIZE / 2 + 0.102
+      logoWall.z
     );
 
     const logoGroup = new THREE.Group();
@@ -755,9 +755,9 @@
     );
 
     logoLabel.position.set(
-      logoWall.x,
+      logoWall.x + CELL_SIZE / 2 + 0.108,
       0.82,
-      logoWall.z + CELL_SIZE / 2 + 0.108
+      logoWall.z
     );
 
     logoGroup.add(logoLabel);
@@ -835,12 +835,12 @@
     vestibuleInteractive.push(workshop);
 
     // Pregunta de entrada: se recuperará al final del museo.
-    const questionPanel = addVestibulePanel(6, 2, 'UNA PREGUNTA PARA EMPEZAR', [
+    const questionPanel = addVestibulePanel(0, 2, 'UNA PREGUNTA PARA EMPEZAR', [
       '¿Qué relación existe',
       'entre un artista del siglo XVIII',
       'y un instituto del siglo XXI?',
       'La respuesta está al final.'
-    ], 'x-', 0.68, 0.50);
+    ], 'x+', 0.82, 0.58);
     questionPanel.userData.museum = {
       titulo: 'Una pregunta para empezar',
       autor: 'Reto del visitante',
