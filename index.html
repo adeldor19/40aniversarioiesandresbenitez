@@ -89,6 +89,19 @@
       font-weight: bold;
       cursor: pointer;
     }
+    #sound-toggle {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 12;
+      padding: 9px 13px;
+      border: 1px solid rgba(181,138,90,.7);
+      border-radius: 999px;
+      background: rgba(43,23,32,.88);
+      color: #F5EFE5;
+      font-size: 12px;
+      cursor: pointer;
+    }
     #message {
       position: fixed;
       left: 50%;
@@ -122,6 +135,7 @@
   </div>
 
   <div id="crosshair"></div>
+  <button id="sound-toggle" type="button">🔇 Sonido ambiente</button>
 
   <div id="museum-panel">
     <h2 id="museum-title"></h2>
@@ -165,6 +179,58 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(VRButton.createButton(renderer));
+
+    let ambientAudio = null;
+
+    function startAmbientSound() {
+      if (ambientAudio) return;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+
+      const audioContext = new AudioContext();
+      const master = audioContext.createGain();
+      master.gain.value = 0.035;
+      master.connect(audioContext.destination);
+
+      const drone = audioContext.createOscillator();
+      const droneGain = audioContext.createGain();
+      drone.type = 'sine';
+      drone.frequency.value = 110;
+      droneGain.gain.value = 0.22;
+      drone.connect(droneGain);
+      droneGain.connect(master);
+
+      const filter = audioContext.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 420;
+
+      const air = audioContext.createBufferSource();
+      const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.018;
+      air.buffer = buffer;
+      air.loop = true;
+      air.connect(filter);
+      filter.connect(master);
+
+      drone.start();
+      air.start();
+
+      ambientAudio = { audioContext, master, drone, air };
+      document.getElementById('sound-toggle').textContent = '🔊 Sonido ambiente';
+    }
+
+    function stopAmbientSound() {
+      if (!ambientAudio) return;
+      ambientAudio.audioContext.close();
+      ambientAudio = null;
+      document.getElementById('sound-toggle').textContent = '🔇 Sonido ambiente';
+    }
+
+    document.getElementById('sound-toggle').addEventListener('click', () => {
+      if (ambientAudio) stopAmbientSound();
+      else startAmbientSound();
+    });
 
     scene.add(new THREE.HemisphereLight(0xF1E5D2, 0x3B2029, 1.8));
 
@@ -590,6 +656,22 @@
       return panel;
     }
 
+    const vestibuleInteractive = [];
+
+    // Panel de bienvenida.
+    addVestibulePanel(0, 2, 'BIENVENIDO', [
+      'Descubre a Andrés Benítez',
+      'y el vínculo con nuestro instituto.',
+      'Explora · Observa · Interactúa · Descubre'
+    ], 'x+', 1.18, 0.72);
+
+    // Panel de interacción.
+    addVestibulePanel(6, 2, '¿CÓMO FUNCIONA?', [
+      'PC · WASD + ratón',
+      'VR · joysticks y mandos',
+      'Apunta a los elementos interactivos'
+    ], 'x-', 1.18, 0.72);
+
     // Panel de contexto: explica por qué el museo une la figura de Andrés
     // Benítez con el 40.º aniversario del centro.
     addVestibulePanel(2, 8, '¿POR QUÉ ESTE MUSEO?', [
@@ -611,6 +693,136 @@
       '04 · JEREZ',
       'El siglo XVIII'
     ], 'z-', 1.72, 0.98);
+
+    // ------------------------------------------------------------
+    // VESTÍBULO · PIEZAS ESCÉNICAS
+    // ------------------------------------------------------------
+
+    // Gran "40" tridimensional del aniversario.
+    const anniversaryGroup = new THREE.Group();
+    const goldMaterial = new THREE.MeshStandardMaterial({
+      color: 0xB58A5A,
+      roughness: 0.45,
+      metalness: 0.15
+    });
+
+    function addBar(group, x, y, width, height, rotation = 0) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.12), goldMaterial);
+      bar.position.set(x, y, 0);
+      bar.rotation.z = rotation;
+      group.add(bar);
+    }
+
+    const digit4 = new THREE.Group();
+    addBar(digit4, -0.20, 0.28, 0.11, 0.72);
+    addBar(digit4, 0.10, 0.04, 0.11, 0.52);
+    addBar(digit4, -0.02, 0.08, 0.52, 0.11);
+    addBar(digit4, 0.02, 0.28, 0.42, 0.11, -0.92);
+    anniversaryGroup.add(digit4);
+
+    const digit0 = new THREE.Mesh(
+      new THREE.TorusGeometry(0.30, 0.075, 16, 32),
+      goldMaterial
+    );
+    digit0.position.set(0.72, 0.32, 0);
+    anniversaryGroup.add(digit0);
+
+    const pedestal = new THREE.Mesh(
+      new THREE.BoxGeometry(1.65, 0.18, 0.62),
+      new THREE.MeshStandardMaterial({ color: 0x4A1F2D, roughness: 0.8 })
+    );
+    pedestal.position.y = -0.08;
+    anniversaryGroup.add(pedestal);
+
+    anniversaryGroup.position.set(
+      gridToWorld(3, 4).x,
+      1.05,
+      gridToWorld(3, 4).z + 0.45
+    );
+    anniversaryGroup.scale.setScalar(1.15);
+    anniversaryGroup.userData.museum = {
+      titulo: '40 AÑOS',
+      autor: 'IES Andrés Benítez · 1986–2026',
+      descripcion: 'Cuatro décadas de historia conectan generaciones de alumnado, profesorado y familias con un centro que lleva el nombre de un artista jerezano.',
+      curiosidad: 'Este museo celebra ese vínculo entre patrimonio, educación y memoria.'
+    };
+    scene.add(anniversaryGroup);
+    vestibuleInteractive.push(anniversaryGroup);
+
+    // Pequeño taller 3D: sirve también para explicar el nombre del instituto.
+    const workshop = new THREE.Group();
+    const wood = new THREE.MeshStandardMaterial({ color: 0x8B5A3C, roughness: 0.82 });
+    const darkWood = new THREE.MeshStandardMaterial({ color: 0x4A1F2D, roughness: 0.8 });
+    const metal = new THREE.MeshStandardMaterial({ color: 0xCDBFA8, roughness: 0.35, metalness: 0.5 });
+
+    const workTop = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.12, 0.72), wood);
+    workTop.position.y = 0.82;
+    workshop.add(workTop);
+
+    [[-0.52,-0.25],[0.52,-0.25],[-0.52,0.25],[0.52,0.25]].forEach(([x,z]) => {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.10,0.78,0.10), darkWood);
+      leg.position.set(x, 0.40, z);
+      workshop.add(leg);
+    });
+
+    const carvedBlock = new THREE.Mesh(
+      new THREE.BoxGeometry(0.42, 0.28, 0.30),
+      new THREE.MeshStandardMaterial({ color: 0xC79B6B, roughness: 0.9 })
+    );
+    carvedBlock.position.set(-0.12, 1.02, 0);
+    workshop.add(carvedBlock);
+
+    const tool = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.035, 0.55, 12),
+      metal
+    );
+    tool.rotation.z = Math.PI / 2.8;
+    tool.position.set(0.36, 1.02, 0.08);
+    workshop.add(tool);
+
+    const toolHandle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.055, 0.30, 12),
+      wood
+    );
+    toolHandle.rotation.z = Math.PI / 2.8;
+    toolHandle.position.set(0.18, 1.10, 0.08);
+    workshop.add(toolHandle);
+
+    const workshopBase = new THREE.Mesh(
+      new THREE.BoxGeometry(1.55, 0.12, 0.88),
+      darkWood
+    );
+    workshopBase.position.y = 0.02;
+    workshop.add(workshopBase);
+
+    workshop.position.set(
+      gridToWorld(2, 3).x + 0.15,
+      0,
+      gridToWorld(2, 3).z + 1.55
+    );
+    workshop.userData.museum = {
+      titulo: 'EL TALLER DE ANDRÉS',
+      autor: 'Un oficio hecho con las manos',
+      descripcion: 'Andrés Benítez fue tallista, ensamblador y retablista. El taller era el espacio donde el conocimiento del oficio se convertía en madera tallada y arquitectura efímera.',
+      curiosidad: 'El instituto lleva su nombre porque su figura forma parte del patrimonio artístico jerezano que da sentido a este recorrido.'
+    };
+    scene.add(workshop);
+    vestibuleInteractive.push(workshop);
+
+    // Pregunta de entrada: se recuperará al final del museo.
+    const questionPanel = addVestibulePanel(3, 1, 'UNA PREGUNTA PARA EMPEZAR', [
+      '¿Qué relación puede existir',
+      'entre un artista del siglo XVIII',
+      'y un instituto del siglo XXI?',
+      'La respuesta está al final.'
+    ], 'z+', 1.55, 0.82);
+    questionPanel.userData.museum = {
+      titulo: 'Una pregunta para empezar',
+      autor: 'Reto del visitante',
+      descripcion: '¿Qué relación puede existir entre un artista del siglo XVIII y un instituto del siglo XXI?',
+      curiosidad: 'Guarda esta pregunta. Al terminar el recorrido podrás responderla con todo lo que hayas descubierto.'
+    };
+    vestibuleInteractive.push(questionPanel);
 
     // ------------------------------------------------------------
     // CRONOLOGÍA INTERACTIVA
@@ -763,6 +975,7 @@
     });
 
     renderer.domElement.addEventListener('pointerdown', (event) => {
+      startAmbientSound();
       if (renderer.xr.isPresenting) return;
 
       pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -770,7 +983,7 @@
 
       raycaster.setFromCamera(pointer, camera);
 
-      const interactiveObjects = [artwork, ...timelineHotspots];
+      const interactiveObjects = [artwork, ...timelineHotspots, ...vestibuleInteractive];
       const hits = raycaster.intersectObjects(interactiveObjects, false);
 
       if (hits.length > 0) {
@@ -943,6 +1156,7 @@
 
     controllers.forEach((controller) => {
       controller.addEventListener('selectstart', () => {
+        startAmbientSound();
         const origin = new THREE.Vector3();
         const direction = new THREE.Vector3(0, 0, -1);
 
@@ -953,7 +1167,7 @@
 
         vrRaycaster.set(origin, direction);
 
-        const interactiveObjects = [artwork, ...timelineHotspots];
+        const interactiveObjects = [artwork, ...timelineHotspots, ...vestibuleInteractive];
         const hits = vrRaycaster.intersectObjects(interactiveObjects, false);
 
         if (hits.length > 0) {
