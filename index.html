@@ -194,7 +194,7 @@
         }
       }
 
-      [6, 11, 18, 23].forEach((wallX) => {
+      [6, 11, 18, 23, 27].forEach((wallX) => {
         if (gy < 3 || gy > 5) row[wallX] = '#';
       });
 
@@ -255,25 +255,37 @@
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Cubiertas de transición entre salas.
-    const roofMaterial = new THREE.MeshStandardMaterial({
-      color: 0x16283c, roughness: 0.82, metalness: 0.04, side: THREE.DoubleSide
+    // Umbrales entre salas: no hay un techo continuo; cada transición
+    // tiene un pórtico que funciona visualmente como una puerta.
+    const portalMaterial = new THREE.MeshStandardMaterial({
+      color: 0x24415f, roughness: 0.72, metalness: 0.08
     });
 
-    function addCoveredPassage(xStartCell, xEndCell) {
-      const a = gridToWorld(xStartCell, 4);
-      const b = gridToWorld(xEndCell, 4);
-      const centerX = (a.x + b.x) / 2;
-      const length = Math.abs(b.x - a.x) + CELL_SIZE;
-      const roof = new THREE.Mesh(new THREE.BoxGeometry(length, 0.18, 2.35), roofMaterial);
-      roof.position.set(centerX, WALL_HEIGHT, a.z);
-      roof.receiveShadow = true;
-      roof.castShadow = true;
-      scene.add(roof);
+    function addDoorPortal(xCell) {
+      const p = gridToWorld(xCell, 4);
+      const group = new THREE.Group();
+
+      const sideGeometry = new THREE.BoxGeometry(0.16, 2.65, 0.16);
+      const topGeometry = new THREE.BoxGeometry(1.75, 0.16, 0.16);
+      const left = new THREE.Mesh(sideGeometry, portalMaterial);
+      const right = new THREE.Mesh(sideGeometry, portalMaterial);
+      const top = new THREE.Mesh(topGeometry, portalMaterial);
+
+      left.position.set(p.x, 1.32, p.z - 0.80);
+      right.position.set(p.x, 1.32, p.z + 0.80);
+      top.position.set(p.x, 2.58, p.z);
+
+      [left, right, top].forEach(mesh => {
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        group.add(mesh);
+      });
+
+      scene.add(group);
     }
 
-    addCoveredPassage(7, 10);
-    addCoveredPassage(19, 22);
+    addDoorPortal(8);
+    addDoorPortal(19);
 
     for (let gy = 0; gy < GH; gy++) {
       for (let gx = 0; gx < GW; gx++) {
@@ -526,8 +538,8 @@
     addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 0.98, 0.46);
     addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 0.98, 0.46);
 
-    addWallSign(23, 4, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 0.98, 0.46);
-    addWallSign(23, 4, '← SALIDA', 'REGRESA POR EL RECORRIDO', 'x-', 0.98, 0.46);
+    addWallSign(27, 4, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 0.98, 0.46);
+    addWallSign(27, 4, '← SALIDA', 'REGRESA POR EL RECORRIDO', 'x-', 0.98, 0.46);
 
     // La línea temporal principal del vestíbulo es la única cronología visible.
 
@@ -547,12 +559,13 @@
     const frameGroup = new THREE.Group();
 
     // Primera pieza: pared interior de la Sala 1.
-    const museumWall = gridToWorld(3, 0);
+    const museumWall = gridToWorld(5, 2);
     frameGroup.position.set(
-      museumWall.x,
+      museumWall.x + CELL_SIZE / 2 + 0.055,
       1.48,
-      museumWall.z + CELL_SIZE / 2 + 0.055
+      museumWall.z
     );
+    frameGroup.rotation.y = Math.PI / 2;
     scene.add(frameGroup);
 
     const frameMaterial = new THREE.MeshStandardMaterial({
