@@ -787,24 +787,70 @@
       'ARQUITECTO · Interviene también en espacios y edificios.'
     ], 'x-', 1.16, 0.96);
 
-    const sala1Question = addVestibulePanel(6, 1, 'UNA PREGUNTA PARA PENSAR', [
-      '¿Era Andrés Benítez solamente',
-      'un escultor?',
-      '',
-      'Descubre los cuatro oficios',
-      'que desarrolló a lo largo de su vida.'
-    ], 'x+', 1.16, 0.96);
+    // Pregunta central de Sala 1 · pieza expositiva independiente.
+// En lugar de ocupar una pared, se presenta como una placa sólida inclinada
+// que recibe al visitante justo al entrar en la sala.
+const questionStand = new THREE.Group();
 
-// Lo acercamos a la zona izquierda del muro, manteniéndolo separado de la esquina.
-sala1Question.position.z += 0.45;
+const questionBase = new THREE.Mesh(
+  new THREE.BoxGeometry(1.55, 0.10, 0.58),
+  new THREE.MeshStandardMaterial({
+    color: 0x4A1F2D,
+    roughness: 0.72,
+    metalness: 0.08
+  })
+);
+questionBase.position.y = 0.05;
+questionStand.add(questionBase);
 
-    sala1Question.userData.museum = {
-      titulo: 'Una pregunta para pensar',
-      autor: 'Sala 1 · El Hombre',
-      descripcion: 'Andrés Benítez y Perea fue tallista, ensamblador, retablista y arquitecto.',
-      curiosidad: 'Su actividad artística no se limitó a un único oficio: desarrolló diferentes facetas relacionadas con el trabajo de la madera, los retablos y la arquitectura.'
-    };
-    vestibuleInteractive.push(sala1Question);
+const questionBody = new THREE.Mesh(
+  new THREE.BoxGeometry(1.42, 1.16, 0.10),
+  new THREE.MeshStandardMaterial({
+    color: 0x5B2939,
+    roughness: 0.58,
+    metalness: 0.12
+  })
+);
+questionBody.position.set(0, 0.68, 0);
+questionStand.add(questionBody);
+
+// Cartela frontal en alta resolución.
+const questionStandTexture = createQuestionTexture('UNA PREGUNTA PARA PENSAR', [
+  '¿Era Andrés Benítez solamente',
+  'un escultor?',
+  'Descubre los cuatro oficios',
+  'que desarrolló a lo largo de su vida.'
+]);
+
+const questionFace = new THREE.Mesh(
+  new THREE.PlaneGeometry(1.22, 0.92),
+  new THREE.MeshBasicMaterial({
+    map: questionStandTexture,
+    side: THREE.DoubleSide
+  })
+);
+
+// La placa mira hacia la entrada de Sala 1.
+questionFace.position.set(0, 0.68, -0.056);
+questionFace.rotation.y = Math.PI;
+questionStand.add(questionFace);
+
+// Ligera inclinación hacia atrás para darle aspecto de pieza expositiva.
+questionStand.rotation.y = -Math.PI / 2;
+questionStand.rotation.z = -0.045;
+
+// Se coloca en el centro de la sala, justo después de la entrada.
+const questionCenter = gridToWorld(8, 4);
+questionStand.position.set(questionCenter.x, 0, questionCenter.z);
+
+questionStand.userData.museum = {
+  titulo: 'Una pregunta para pensar',
+  autor: 'Sala 1 · El Hombre',
+  descripcion: 'Andrés Benítez y Perea fue tallista, ensamblador, retablista y arquitecto.',
+  curiosidad: 'Su actividad artística no se limitó a un único oficio: desarrolló diferentes facetas relacionadas con el trabajo de la madera, los retablos y la arquitectura.'
+};
+scene.add(questionStand);
+vestibuleInteractive.push(questionStand);
 
     // Panel de contexto: explica por qué el museo une la figura de Andrés
     // Benítez con el 40.º aniversario del centro.
