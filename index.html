@@ -1064,6 +1064,10 @@ vestibuleInteractive.push(questionStand);
     sagrarioLabelContext.font = '30px Arial';
     sagrarioLabelContext.fillText('SAN MIGUEL · JEREZ DE LA FRONTERA', 700, 148);
 
+    sagrarioLabelContext.fillStyle = '#CDBFA8';
+    sagrarioLabelContext.font = 'bold 26px Arial';
+    sagrarioLabelContext.fillText('PULSA PARA VER MÁS', 700, 195);
+
     const sagrarioLabelTexture = new THREE.CanvasTexture(sagrarioLabelCanvas);
     sagrarioLabelTexture.colorSpace = THREE.SRGBColorSpace;
     sagrarioLabelTexture.minFilter = THREE.LinearFilter;
@@ -1082,9 +1086,9 @@ vestibuleInteractive.push(questionStand);
     sagrarioGroup.add(sagrarioLabel);
     sagrarioGroup.userData.museum = {
       titulo: 'Puertas del Sagrario de San Miguel',
-      autor: 'Jerez de la Frontera',
-      descripcion: 'Pieza presentada en la Sala 1 como ejemplo del patrimonio artístico jerezano relacionado con el trabajo de la madera.',
-      curiosidad: 'La imagen muestra las puertas talladas del Sagrario de San Miguel de Jerez de la Frontera.'
+      autor: 'Andrés Benítez y Perea · Rococó en la Baja Andalucía',
+      descripcion: 'Los batientes de la puerta muestran la maestría de Andrés Benítez en la asimilación del rococó en la Baja Andalucía. Destacan por su diseño dinámico, el uso de perfiles sinuosos, la ornamentación asimétrica vegetal y las rocallas típicas de esta corriente artística.',
+      curiosidad: 'Pulsa para ver más sobre esta pieza y descubrir cómo el lenguaje rococó se integra en la obra de Andrés Benítez.'
     };
 
     scene.add(sagrarioGroup);
