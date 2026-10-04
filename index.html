@@ -116,7 +116,7 @@
 <body>
   <div id="info">
     <strong>40º ANIVERSARIO · IES ANDRÉS BENÍTEZ</strong>
-    <span>Proyecto VR · El legado de Andrés Benítez</span>
+    <span>Proyecto VR · El legado de Andrés Benítez</span><span>Sala 1 · ¿Quién fue Andrés Benítez?</span>
     <span>Colisiones: ACTIVADAS</span>
     <span>PC: WASD + ratón · VR: joystick izquierdo</span>
   </div>
@@ -339,10 +339,10 @@
     const pointer = new THREE.Vector2();
 
     const museumData = {
-      titulo: 'Primer espacio del museo',
-      autor: 'Proyecto 40.º Aniversario · IES Andrés Benítez',
-      descripcion: 'Esta pieza inaugura el museo virtual dedicado a Andrés Benítez. A partir de aquí iremos incorporando su vida, su obra y el contexto histórico de Jerez.',
-      curiosidad: 'El objetivo final es recorrer el museo, descubrir su legado y conectar su historia con los 40 años del instituto.'
+      titulo: 'Andrés Benítez y Perea',
+      autor: 'Jerez de la Frontera · 29 de noviembre de 1725 – 3 de septiembre de 1786',
+      descripcion: 'Fue tallista, ensamblador, retablista y arquitecto. Desarrolló buena parte de su trayectoria en Jerez y abrió su propio taller en la calle Honda en 1754. Su obra está vinculada especialmente al desarrollo del rococó jerezano.',
+      curiosidad: 'En 1770 declaró haber realizado alrededor de treinta retablos durante sus primeros dieciséis años de actividad independiente. Su legado se conserva en distintos templos de Jerez y de otras localidades de la provincia de Cádiz.'
     };
 
     const frameGroup = new THREE.Group();
@@ -362,8 +362,12 @@
       metalness: 0.18
     });
 
+    const artworkTexture = new THREE.TextureLoader().load(
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Retablo_de_las_%C3%81nimas%2C_Iglesia_de_Santa_Mar%C3%ADa_de_la_Asunci%C3%B3n_%28Arcos_de_la_Frontera%29.jpg/960px-Retablo_de_las_%C3%81nimas%2C_Iglesia_de_Santa_Mar%C3%ADa_de_la_Asunci%C3%B3n_%28Arcos_de_la_Frontera%29.jpg'
+    );
+
     const artworkMaterial = new THREE.MeshBasicMaterial({
-      color: 0x315f7d
+      map: artworkTexture
     });
 
     const frame = new THREE.Mesh(
@@ -391,10 +395,10 @@
     labelContext.fillRect(0, 0, 512, 128);
     labelContext.fillStyle = '#ffffff';
     labelContext.font = 'bold 22px Arial';
-    labelContext.fillText('PIEZA DE PRUEBA', 20, 48);
+    labelContext.fillText('ANDRÉS BENÍTEZ Y PEREA', 20, 48);
     labelContext.font = '16px Arial';
     labelContext.fillStyle = '#f08a3c';
-    labelContext.fillText('MUSEO · 40.º ANIVERSARIO', 20, 88);
+    labelContext.fillText('RETABLO DE LAS ÁNIMAS · ARCOS DE LA FRONTERA', 20, 88);
 
     const labelTexture = new THREE.CanvasTexture(labelCanvas);
 
