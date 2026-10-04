@@ -546,13 +546,13 @@
 
         ctx.textAlign = 'center';
         ctx.fillStyle = '#F5EFE5';
-        ctx.font = '24px Arial';
 
         const visibleLines = lines.filter(Boolean);
-        const lineHeight = 38;
-        const startY = 180 - ((visibleLines.length - 1) * lineHeight) / 2;
+        const lineHeight = visibleLines.length >= 7 ? 36 : 40;
+        const startY = 165;
 
         visibleLines.forEach((line, index) => {
+          ctx.font = (line.length > 34 ? '22px Arial' : '24px Arial');
           ctx.fillText(line, w / 2, startY + index * lineHeight);
         });
       });
