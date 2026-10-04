@@ -345,6 +345,9 @@
       }
     }
 
+    // Objetos expositivos sólidos: el visitante no puede atravesarlos.
+    const solidExhibits = [];
+
     function isFree(x, z, radius) {
       const { gx, gy } = worldToGridApprox(x, z);
 
@@ -375,6 +378,18 @@
           if (dx * dx + dz * dz < radius * radius) {
             return false;
           }
+        }
+      }
+
+      // Colisión con piezas expositivas sólidas.
+      for (const box of solidExhibits) {
+        const closestX = Math.max(box.minX, Math.min(x, box.maxX));
+        const closestZ = Math.max(box.minZ, Math.min(z, box.maxZ));
+        const dx = x - closestX;
+        const dz = z - closestZ;
+
+        if (dx * dx + dz * dz < radius * radius) {
+          return false;
         }
       }
 
@@ -804,7 +819,7 @@ questionBase.position.y = 0.05;
 questionStand.add(questionBase);
 
 const questionBody = new THREE.Mesh(
-  new THREE.BoxGeometry(1.42, 1.16, 0.10),
+  new THREE.BoxGeometry(1.28, 1.28, 0.12),
   new THREE.MeshStandardMaterial({
     color: 0x5B2939,
     roughness: 0.58,
@@ -823,7 +838,7 @@ const questionStandTexture = createQuestionTexture('UNA PREGUNTA PARA PENSAR', [
 ]);
 
 const questionFace = new THREE.Mesh(
-  new THREE.PlaneGeometry(1.22, 0.92),
+  new THREE.PlaneGeometry(1.08, 1.08),
   new THREE.MeshBasicMaterial({
     map: questionStandTexture,
     side: THREE.DoubleSide
@@ -831,13 +846,14 @@ const questionFace = new THREE.Mesh(
 );
 
 // La placa mira hacia la entrada de Sala 1.
-questionFace.position.set(0, 0.68, -0.056);
+questionFace.position.set(0, 0.68, -0.066);
 questionFace.rotation.y = Math.PI;
 questionStand.add(questionFace);
 
-// Ligera inclinación hacia atrás para darle aspecto de pieza expositiva.
-questionStand.rotation.y = -Math.PI / 2;
-questionStand.rotation.z = -0.045;
+// Recta y orientada hacia la cara de entrada de Sala 1.
+// La entrada está en el muro 6: el visitante llega desde -X.
+questionStand.rotation.y = Math.PI / 2;
+questionStand.rotation.z = 0;
 
 // Se coloca en el centro de la sala, justo después de la entrada.
 const questionCenter = gridToWorld(8, 4);
@@ -1034,6 +1050,17 @@ vestibuleInteractive.push(questionStand);
       0,
       gridToWorld(2, 3).z + 1.55
     );
+
+    // El banco/taller ocupa físicamente este rectángulo y bloquea el paso.
+    // Dejamos un pequeño margen para que el jugador no pueda rozar la pieza.
+    const workshopHalfX = 1.55 / 2 + 0.08;
+    const workshopHalfZ = 0.88 / 2 + 0.08;
+    solidExhibits.push({
+      minX: workshop.position.x - workshopHalfX,
+      maxX: workshop.position.x + workshopHalfX,
+      minZ: workshop.position.z - workshopHalfZ,
+      maxZ: workshop.position.z + workshopHalfZ
+    });
     workshop.userData.museum = {
       titulo: 'EL TALLER DE ANDRÉS',
       autor: 'Un oficio hecho con las manos',
