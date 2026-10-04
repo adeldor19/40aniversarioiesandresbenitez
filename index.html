@@ -194,7 +194,7 @@
         }
       }
 
-      [6, 11, 18, 23, 30].forEach((wallX) => {
+      [6, 11, 18, 23].forEach((wallX) => {
         if (gy < 3 || gy > 5) row[wallX] = '#';
       });
 
@@ -254,6 +254,26 @@
     floor.position.y = -0.08;
     floor.receiveShadow = true;
     scene.add(floor);
+
+    // Cubiertas de transición entre salas.
+    const roofMaterial = new THREE.MeshStandardMaterial({
+      color: 0x16283c, roughness: 0.82, metalness: 0.04, side: THREE.DoubleSide
+    });
+
+    function addCoveredPassage(xStartCell, xEndCell) {
+      const a = gridToWorld(xStartCell, 4);
+      const b = gridToWorld(xEndCell, 4);
+      const centerX = (a.x + b.x) / 2;
+      const length = Math.abs(b.x - a.x) + CELL_SIZE;
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(length, 0.18, 2.35), roofMaterial);
+      roof.position.set(centerX, WALL_HEIGHT, a.z);
+      roof.receiveShadow = true;
+      roof.castShadow = true;
+      scene.add(roof);
+    }
+
+    addCoveredPassage(7, 10);
+    addCoveredPassage(19, 22);
 
     for (let gy = 0; gy < GH; gy++) {
       for (let gx = 0; gx < GW; gx++) {
@@ -376,18 +396,26 @@
       );
 
       if (side === 'x+') {
-        sign.position.set(wall.x + CELL_SIZE / 2 + 0.035, 2.15, wall.z);
+        sign.position.set(wall.x + CELL_SIZE / 2 + 0.012, 1.95, wall.z);
         sign.rotation.y = Math.PI / 2;
       } else if (side === 'x-') {
-        sign.position.set(wall.x - CELL_SIZE / 2 - 0.035, 2.15, wall.z);
+        sign.position.set(wall.x - CELL_SIZE / 2 - 0.012, 1.95, wall.z);
         sign.rotation.y = -Math.PI / 2;
       } else if (side === 'z+') {
-        sign.position.set(wall.x, 2.15, wall.z + CELL_SIZE / 2 + 0.035);
+        sign.position.set(wall.x, 1.95, wall.z + CELL_SIZE / 2 + 0.012);
       } else {
-        sign.position.set(wall.x, 2.15, wall.z - CELL_SIZE / 2 - 0.035);
+        sign.position.set(wall.x, 1.95, wall.z - CELL_SIZE / 2 - 0.012);
         sign.rotation.y = Math.PI;
       }
 
+      const backing = new THREE.Mesh(
+        new THREE.BoxGeometry(width + 0.06, height + 0.06, 0.045),
+        new THREE.MeshStandardMaterial({ color: 0x0b1728, roughness: 0.72 })
+      );
+      backing.position.copy(sign.position);
+      backing.rotation.copy(sign.rotation);
+      backing.translateZ(-0.025);
+      scene.add(backing);
       scene.add(sign);
       return sign;
     }
@@ -501,49 +529,7 @@
     addWallSign(23, 4, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 0.98, 0.46);
     addWallSign(23, 4, '← SALIDA', 'REGRESA POR EL RECORRIDO', 'x-', 0.98, 0.46);
 
-    const routeTexture = createCanvasTexture(768, 220, (ctx, w, h) => {
-      ctx.fillStyle = '#101c2d';
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#f08a3c';
-      ctx.font = 'bold 25px Arial';
-      ctx.fillText('RECORRIDO', w / 2, 48);
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 22px Arial';
-      ctx.fillText('01', 90, 115);
-      ctx.fillText('02', 285, 115);
-      ctx.fillText('03', 480, 115);
-      ctx.fillText('04', 675, 115);
-
-      ctx.strokeStyle = '#54708d';
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.moveTo(115, 112);
-      ctx.lineTo(650, 112);
-      ctx.stroke();
-
-      ctx.fillStyle = '#9eb1c4';
-      ctx.font = '16px Arial';
-      ctx.fillText('EL HOMBRE', 90, 155);
-      ctx.fillText('EL ARTISTA', 285, 155);
-      ctx.fillText('JEREZ', 480, 155);
-      ctx.fillText('SUS OBRAS', 675, 155);
-    });
-
-    const routePanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.96, 0.28),
-      new THREE.MeshBasicMaterial({ map: routeTexture, side: THREE.DoubleSide })
-    );
-    const routeWall = gridToWorld(0, 2);
-    routePanel.position.set(
-      routeWall.x + CELL_SIZE / 2 + 0.04,
-      1.12,
-      routeWall.z
-    );
-    routePanel.rotation.y = Math.PI / 2;
-    scene.add(routePanel);
+    // La línea temporal principal del vestíbulo es la única cronología visible.
 
     // MUSEO · PRIMERA PIEZA
     // ------------------------------------------------------------
