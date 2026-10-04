@@ -873,7 +873,7 @@
     // Pregunta de entrada: se recuperará al final del museo.
     const questionWall = gridToWorld(6, 2);
     const questionPanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.76, 0.44),
+      new THREE.PlaneGeometry(0.74, 0.48),
       new THREE.MeshBasicMaterial({
         map: createQuestionTexture('UNA PREGUNTA PARA EMPEZAR', [
           '¿Qué relación existe',
@@ -886,7 +886,7 @@
     );
     questionPanel.position.set(
       questionWall.x - CELL_SIZE / 2 - 0.018,
-      1.52,
+      1.78,
       questionWall.z
     );
     questionPanel.rotation.y = -Math.PI / 2;
