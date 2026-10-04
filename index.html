@@ -179,22 +179,27 @@
     scene.add(mainLight);
 
     const CELL_SIZE = 1.4;
-    const grid = [
-      "###############",
-      "#.............#",
-      "#..###........#",
-      "#........###..#",
-      "#..#..........#",
-      "#..#..####....#",
-      "#.....#.......#",
-      "#.....#..###..#",
-      "#.............#",
-      "#.............#",
-      "###############"
-    ];
 
-    const GH = grid.length;
-    const GW = grid[0].length;
+    // Museo lineal: vestíbulo → Sala 1 → Sala 2 → Sala 3.
+    // Las puertas centrales permiten avanzar de una sala a la siguiente.
+    const GH = 13;
+    const GW = 31;
+
+    const grid = Array.from({ length: GH }, (_, gy) => {
+      const row = Array(GW).fill('.');
+
+      for (let gx = 0; gx < GW; gx++) {
+        if (gx === 0 || gx === GW - 1 || gy === 0 || gy === GH - 1) {
+          row[gx] = '#';
+        }
+      }
+
+      [8, 11, 19, 22].forEach((wallX) => {
+        if (gy < 5 || gy > 7) row[wallX] = '#';
+      });
+
+      return row.join('');
+    });
     const PLAYER_RADIUS = 0.30;
     const WALL_HEIGHT = 3.6;
 
@@ -259,8 +264,8 @@
           gx === 0 || gy === 0 || gx === GW - 1 || gy === GH - 1;
 
         const mesh = new THREE.Mesh(
-          isOuterWall ? wallGeometry : obstacleGeometry,
-          isOuterWall ? wallMaterial : obstacleMaterial
+          wallGeometry,
+          wallMaterial
         );
 
         mesh.position.set(
@@ -273,15 +278,6 @@
         scene.add(mesh);
       }
     }
-
-    const gridHelper = new THREE.GridHelper(
-      GW * CELL_SIZE,
-      GW,
-      0x31506e,
-      0x1b2c40
-    );
-    gridHelper.position.y = 0.01;
-    scene.add(gridHelper);
 
     function isFree(x, z, radius) {
       const { gx, gy } = worldToGridApprox(x, z);
@@ -328,11 +324,12 @@
       }
     }
 
-    const start = gridToWorld(1, 1);
+    const start = gridToWorld(2, 6);
     dolly.position.set(start.x, 0, start.z);
 
     // ------------------------------------------------------------
-    // MUSEO · VESTÍBULO DE ENTRADA
+    // ------------------------------------------------------------
+    // MUSEO · VESTÍBULO Y SEÑALÉTICA
     // ------------------------------------------------------------
 
     function createCanvasTexture(width, height, draw) {
@@ -344,107 +341,117 @@
       return new THREE.CanvasTexture(canvas);
     }
 
-    function createEntrancePanel(title, subtitle, accent = '#f08a3c') {
-      const texture = createCanvasTexture(1024, 512, (ctx, w, h) => {
+    function createSignTexture(title, subtitle, accent = '#f08a3c') {
+      return createCanvasTexture(768, 300, (ctx, w, h) => {
         ctx.fillStyle = '#0b1728';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = accent;
         ctx.lineWidth = 8;
-        ctx.strokeRect(28, 28, w - 56, h - 56);
+        ctx.strokeRect(18, 18, w - 36, h - 36);
 
-        ctx.fillStyle = '#f5f8fb';
         ctx.textAlign = 'center';
-        ctx.font = 'bold 62px Arial';
-        ctx.fillText(title, w / 2, 190);
+        ctx.fillStyle = '#f5f8fb';
+        ctx.font = 'bold 46px Arial';
+        ctx.fillText(title, w / 2, 125);
 
         ctx.fillStyle = accent;
-        ctx.font = 'bold 32px Arial';
-        ctx.fillText(subtitle, w / 2, 255);
+        ctx.font = 'bold 24px Arial';
+        ctx.fillText(subtitle, w / 2, 180);
 
-        ctx.fillStyle = '#c9d7e6';
-        ctx.font = '24px Arial';
-        ctx.fillText('1725  →  1786  →  1986  →  2026', w / 2, 350);
-
-        ctx.fillStyle = '#91a6bb';
-        ctx.font = '20px Arial';
-        ctx.fillText('Descubre el legado de un artista jerezano', w / 2, 405);
+        ctx.fillStyle = '#9eb1c4';
+        ctx.font = '18px Arial';
+        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 230);
       });
-
-      const panel = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.8, 1.4),
-        new THREE.MeshBasicMaterial({ map: texture })
-      );
-
-      return panel;
     }
 
-    const entranceWall = gridToWorld(1, 0);
-    const entrancePanel = createEntrancePanel(
+    function addWallSign(gx, gy, title, subtitle, side = 'x+', width = 1.12, height = 0.56) {
+      const wall = gridToWorld(gx, gy);
+      const sign = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, height),
+        new THREE.MeshBasicMaterial({
+          map: createSignTexture(title, subtitle),
+          side: THREE.DoubleSide
+        })
+      );
+
+      if (side === 'x+') {
+        sign.position.set(wall.x + CELL_SIZE / 2 + 0.035, 2.15, wall.z);
+        sign.rotation.y = Math.PI / 2;
+      } else if (side === 'x-') {
+        sign.position.set(wall.x - CELL_SIZE / 2 - 0.035, 2.15, wall.z);
+        sign.rotation.y = -Math.PI / 2;
+      } else if (side === 'z+') {
+        sign.position.set(wall.x, 2.15, wall.z + CELL_SIZE / 2 + 0.035);
+      } else {
+        sign.position.set(wall.x, 2.15, wall.z - CELL_SIZE / 2 - 0.035);
+        sign.rotation.y = Math.PI;
+      }
+
+      scene.add(sign);
+      return sign;
+    }
+
+    // El cartel ocupa menos que la celda de pared: nunca sobresale por los laterales.
+    addWallSign(
+      0, 6,
       'MUSEO VIRTUAL',
-      'ANDRÉS BENÍTEZ · 40.º ANIVERSARIO'
+      'ANDRÉS BENÍTEZ · 40.º ANIVERSARIO',
+      'x+',
+      1.12,
+      0.56
     );
-    entrancePanel.position.set(
-      entranceWall.x,
-      2.15,
-      entranceWall.z + CELL_SIZE / 2 + 0.035
-    );
-    scene.add(entrancePanel);
 
-    const entranceFloor = new THREE.Mesh(
-      new THREE.BoxGeometry(2.2, 0.025, 1.15),
-      new THREE.MeshStandardMaterial({
-        color: 0x17283d,
-        roughness: 0.65,
-        metalness: 0.18
-      })
-    );
-    entranceFloor.position.set(start.x, 0.015, start.z);
-    scene.add(entranceFloor);
+    // Señalización de recorrido: cada tramo anuncia la sala que viene.
+    addWallSign(8, 6, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 1.08, 0.50);
+    addWallSign(11, 6, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.08, 0.50);
+    addWallSign(19, 6, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.08, 0.50);
+    addWallSign(22, 6, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 1.08, 0.50);
 
-    const timelineTexture = createCanvasTexture(768, 220, (ctx, w, h) => {
+    const routeTexture = createCanvasTexture(768, 220, (ctx, w, h) => {
       ctx.fillStyle = '#101c2d';
       ctx.fillRect(0, 0, w, h);
 
-      ctx.fillStyle = '#f08a3c';
-      ctx.font = 'bold 28px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText('UNA HISTORIA QUE CONTINÚA', w / 2, 52);
+      ctx.fillStyle = '#f08a3c';
+      ctx.font = 'bold 25px Arial';
+      ctx.fillText('RECORRIDO', w / 2, 48);
 
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 30px Arial';
-      ctx.fillText('1725', 100, 125);
-      ctx.fillText('1786', 280, 125);
-      ctx.fillText('1986', 488, 125);
-      ctx.fillText('2026', 668, 125);
+      ctx.font = 'bold 22px Arial';
+      ctx.fillText('01', 90, 115);
+      ctx.fillText('02', 285, 115);
+      ctx.fillText('03', 480, 115);
+      ctx.fillText('04', 675, 115);
 
       ctx.strokeStyle = '#54708d';
       ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(120, 143);
-      ctx.lineTo(648, 143);
+      ctx.moveTo(115, 112);
+      ctx.lineTo(650, 112);
       ctx.stroke();
 
-      ctx.fillStyle = '#a9bbcc';
-      ctx.font = '18px Arial';
-      ctx.fillText('Nace', 100, 180);
-      ctx.fillText('Fallece', 280, 180);
-      ctx.fillText('Nace el instituto', 488, 180);
-      ctx.fillText('40.º aniversario', 668, 180);
+      ctx.fillStyle = '#9eb1c4';
+      ctx.font = '16px Arial';
+      ctx.fillText('EL HOMBRE', 90, 155);
+      ctx.fillText('EL ARTISTA', 285, 155);
+      ctx.fillText('JEREZ', 480, 155);
+      ctx.fillText('SUS OBRAS', 675, 155);
     });
 
-    const timeline = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.35, 0.67),
-      new THREE.MeshBasicMaterial({ map: timelineTexture })
+    const routePanel = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.10, 0.32),
+      new THREE.MeshBasicMaterial({ map: routeTexture, side: THREE.DoubleSide })
     );
-    timeline.position.set(
-      gridToWorld(2, 0).x,
-      0.95,
-      gridToWorld(2, 0).z + CELL_SIZE / 2 + 0.04
+    const routeWall = gridToWorld(0, 4);
+    routePanel.position.set(
+      routeWall.x + CELL_SIZE / 2 + 0.04,
+      1.15,
+      routeWall.z
     );
-    scene.add(timeline);
+    routePanel.rotation.y = Math.PI / 2;
+    scene.add(routePanel);
 
-    // ------------------------------------------------------------
     // MUSEO · PRIMERA PIEZA
     // ------------------------------------------------------------
 
@@ -460,13 +467,14 @@
 
     const frameGroup = new THREE.Group();
 
-    // Celda de pared gx=3, gy=2. La celda situada en +Z es un pasillo.
-    const museumWall = gridToWorld(3, 2);
+    // Primera pieza: pared interior de la Sala 1.
+    const museumWall = gridToWorld(0, 4);
     frameGroup.position.set(
-      museumWall.x,
-      1.45,
-      museumWall.z + CELL_SIZE / 2 + 0.025
+      museumWall.x + CELL_SIZE / 2 + 0.055,
+      1.55,
+      museumWall.z
     );
+    frameGroup.rotation.y = Math.PI / 2;
     scene.add(frameGroup);
 
     const frameMaterial = new THREE.MeshStandardMaterial({
@@ -556,7 +564,7 @@
 
     const keys = new Set();
     let pointerLocked = false;
-    let yaw = 0;
+    let yaw = -Math.PI / 2;
     let pitch = 0;
 
     window.addEventListener('keydown', (event) => keys.add(event.code));
