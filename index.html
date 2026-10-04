@@ -432,26 +432,26 @@
     }
 
     function createSignTexture(title, subtitle, accent = '#B58A5A') {
-      return createCanvasTexture(1536, 700, (ctx, w, h) => {
+      return createCanvasTexture(2400, 1094, (ctx, w, h) => {
         ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = accent;
-        ctx.lineWidth = 8;
-        ctx.strokeRect(24, 24, w - 48, h - 48);
+        ctx.lineWidth = 10;
+        ctx.strokeRect(30, 30, w - 60, h - 60);
 
         ctx.textAlign = 'center';
         ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 86px Arial';
-        ctx.fillText(title, w / 2, 270);
+        ctx.font = 'bold 112px Arial';
+        ctx.fillText(title, w / 2, 420);
 
         ctx.fillStyle = accent;
-        ctx.font = 'bold 44px Arial';
-        ctx.fillText(subtitle, w / 2, 400);
+        ctx.font = 'bold 58px Arial';
+        ctx.fillText(subtitle, w / 2, 610);
 
         ctx.fillStyle = '#CDBFA8';
-        ctx.font = '34px Arial';
-        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 530);
+        ctx.font = '44px Arial';
+        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 810);
       });
     }
 
@@ -594,7 +594,7 @@
 
     // Muro 11 · SALA 1 / SALA 2
     addWallSign(11, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 1.00, 0.46);
-    addWallSign(11, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.00, 0.46);
+    addWallSign(11, 2, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.00, 0.46);
 
     // Muro 18 · SALA 2 / SALA 3
     addWallSign(18, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 1.00, 0.46);
@@ -618,13 +618,13 @@
     // ------------------------------------------------------------
 
     function createInfoTexture(title, lines, accent = '#B58A5A') {
-      return createCanvasTexture(1800, 1000, (ctx, w, h) => {
+      return createCanvasTexture(3000, 1667, (ctx, w, h) => {
         ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
         ctx.strokeStyle = accent;
-        ctx.lineWidth = 8;
-        ctx.strokeRect(36, 36, w - 72, h - 72);
+        ctx.lineWidth = 12;
+        ctx.strokeRect(50, 50, w - 100, h - 100);
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -632,20 +632,20 @@
         // La cartela se compone como una pieza editorial:
         // título arriba y el bloque de contenido centrado en el espacio restante.
         ctx.fillStyle = accent;
-        ctx.font = 'bold 68px Arial';
-        ctx.fillText(title, w / 2, 118);
+        ctx.font = 'bold 112px Arial';
+        ctx.fillText(title, w / 2, 195);
 
         ctx.strokeStyle = '#8B5A68';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 5;
         ctx.beginPath();
-        ctx.moveTo(280, 174);
-        ctx.lineTo(1520, 174);
+        ctx.moveTo(470, 270);
+        ctx.lineTo(2530, 270);
         ctx.stroke();
 
         const visibleLines = lines.filter(Boolean);
-        const maxTextWidth = w - 300;
-        const baseFont = visibleLines.length >= 7 ? 48 : visibleLines.length >= 5 ? 54 : 60;
-        const lineGap = visibleLines.length >= 7 ? 18 : 20;
+        const maxTextWidth = w - 500;
+        const baseFont = visibleLines.length >= 7 ? 78 : visibleLines.length >= 5 ? 88 : 98;
+        const lineGap = visibleLines.length >= 7 ? 28 : 30;
 
         // Ajustamos automáticamente cada línea para que no quede ni diminuta
         // ni pegada al borde. Las líneas largas se parten en dos si hace falta.
