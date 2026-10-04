@@ -195,7 +195,7 @@
       }
 
       [6, 11, 18, 23, 25].forEach((wallX) => {
-        if (gy < 3 || gy > 5) row[wallX] = '#';
+        if (gy !== 4) row[wallX] = '#';
       });
 
       return row.join('');
@@ -488,17 +488,18 @@
     );
     scene.add(timelinePanel);
 
-    // Señalización de recorrido: cada tramo anuncia la sala que viene.
-    // Señalización siempre orientada hacia el sentido de llegada.
-    // Cada cartel tiene una segunda copia en la cara opuesta para el regreso.
-    addWallSign(6, 4, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x+', 0.98, 0.46);
-    addWallSign(6, 4, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 0.98, 0.46);
+    // Señalética anclada a bloques de pared reales, justo junto a cada paso.
+    addWallSign(6, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x+', 1.00, 0.46);
+    addWallSign(6, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 1.00, 0.46);
 
-    addWallSign(11, 4, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 0.98, 0.46);
-    addWallSign(11, 4, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 0.98, 0.46);
+    addWallSign(11, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.00, 0.46);
+    addWallSign(11, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 1.00, 0.46);
 
-    addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 0.98, 0.46);
-    addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 0.98, 0.46);
+    addWallSign(18, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 1.00, 0.46);
+    addWallSign(18, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.00, 0.46);
+
+    addWallSign(25, 3, 'SALIDA →', 'FIN DEL RECORRIDO', 'x+', 1.00, 0.46);
+    addWallSign(25, 3, '← SALIDA', 'REGRESA AL RECORRIDO', 'x-', 1.00, 0.46);
 
     // La línea temporal principal del vestíbulo es la única cronología visible.
 
