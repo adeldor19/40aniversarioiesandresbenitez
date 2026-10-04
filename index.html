@@ -417,7 +417,7 @@
     }
 
     function createSignTexture(title, subtitle, accent = '#B58A5A') {
-      return createCanvasTexture(1536, 600, (ctx, w, h) => {
+      return createCanvasTexture(1536, 700, (ctx, w, h) => {
         ctx.fillStyle = '#4A1F2D';
         ctx.fillRect(0, 0, w, h);
 
@@ -427,16 +427,16 @@
 
         ctx.textAlign = 'center';
         ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 92px Arial';
-        ctx.fillText(title, w / 2, 250);
+        ctx.font = 'bold 86px Arial';
+        ctx.fillText(title, w / 2, 270);
 
         ctx.fillStyle = accent;
-        ctx.font = 'bold 48px Arial';
-        ctx.fillText(subtitle, w / 2, 360);
+        ctx.font = 'bold 44px Arial';
+        ctx.fillText(subtitle, w / 2, 400);
 
         ctx.fillStyle = '#CDBFA8';
-        ctx.font = '36px Arial';
-        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 460);
+        ctx.font = '34px Arial';
+        ctx.fillText('1725 → 1786 → 1986 → 2026', w / 2, 530);
       });
     }
 
@@ -712,21 +712,21 @@
       'Desarrolló buena parte de su trayectoria en Jerez',
       'y abrió su taller en la calle Honda en 1754.',
       'Su obra está ligada al desarrollo del rococó jerezano.'
-    ], 'z+', 2.85, 1.48);
+    ], 'z+', 2.85, 1.58);
 
     const sala1Timeline = addVestibulePanel(9, 8, 'SU VIDA EN CUATRO MOMENTOS', [
       '1725 · Nace en Jerez de la Frontera',
       '1754 · Abre su taller en la calle Honda',
       '1764–1775 · Desarrolla obras y encargos destacados',
       '1786 · Fallece en Jerez'
-    ], 'z-', 3.05, 1.10);
+    ], 'z-', 3.05, 1.69);
 
     const sala1Trades = addVestibulePanel(11, 6, 'UN HOMBRE · CUATRO OFICIOS', [
       'TALLISTA · Trabaja y ornamenta la madera.',
       'ENSAMBLADOR · Construye y monta estructuras.',
       'RETABLISTA · Diseña y realiza retablos.',
       'ARQUITECTO · Interviene también en espacios y edificios.'
-    ], 'x-', 1.72, 1.42);
+    ], 'x-', 1.72, 0.96);
 
     const sala1Question = addVestibulePanel(6, 1, 'UNA PREGUNTA PARA PENSAR', [
       '¿Era Andrés Benítez solamente',
@@ -734,7 +734,7 @@
       '',
       'Descubre los cuatro oficios',
       'que desarrolló a lo largo de su vida.'
-    ], 'x+', 1.72, 1.18);
+    ], 'x+', 1.72, 0.96);
 
     sala1Question.userData.museum = {
       titulo: 'Una pregunta para pensar',
@@ -752,7 +752,7 @@
       'recupera la figura de Andrés Benítez',
       'y Perea y la conecta con la identidad',
       'del centro que lleva su nombre.'
-    ], 'z-', 1.72, 0.98);
+    ], 'z-', 1.72, 0.96);
 
     // Panel de orientación: prepara al visitante para el recorrido.
     addVestibulePanel(4, 8, 'TU RECORRIDO', [
@@ -938,7 +938,7 @@
     // Pregunta de entrada: se recuperará al final del museo.
     const questionWall = gridToWorld(0, 2);
     const questionPanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.74, 0.48),
+      new THREE.PlaneGeometry(0.86, 0.48),
       new THREE.MeshBasicMaterial({
         map: createQuestionTexture('UNA PREGUNTA PARA EMPEZAR', [
           '¿Qué relación existe',
