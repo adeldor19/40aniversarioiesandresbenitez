@@ -691,6 +691,49 @@
 
     const vestibuleInteractive = [];
 
+    // ------------------------------------------------------------
+    // SALA 1 · EL HOMBRE
+    // ------------------------------------------------------------
+    // La sala se plantea de forma muy sencilla: quién fue, una pequeña
+    // línea de vida, sus cuatro oficios y una pregunta final.
+    const sala1Main = addVestibulePanel(8, 0, 'ANDRÉS BENÍTEZ Y PEREA', [
+      'Jerez de la Frontera · 1725–1786',
+      'Tallista, ensamblador, retablista y arquitecto.',
+      'Desarrolló buena parte de su trayectoria en Jerez',
+      'y abrió su taller en la calle Honda en 1754.',
+      'Su obra está ligada al desarrollo del rococó jerezano.'
+    ], 'z+', 2.85, 1.48);
+
+    const sala1Timeline = addVestibulePanel(9, 8, 'SU VIDA EN CUATRO MOMENTOS', [
+      '1725 · Nace en Jerez de la Frontera',
+      '1754 · Abre su taller en la calle Honda',
+      '1764–1775 · Desarrolla obras y encargos destacados',
+      '1786 · Fallece en Jerez'
+    ], 'z-', 3.05, 1.10);
+
+    const sala1Trades = addVestibulePanel(11, 6, 'UN HOMBRE · CUATRO OFICIOS', [
+      'TALLISTA · Trabaja y ornamenta la madera.',
+      'ENSAMBLADOR · Construye y monta estructuras.',
+      'RETABLISTA · Diseña y realiza retablos.',
+      'ARQUITECTO · Interviene también en espacios y edificios.'
+    ], 'x-', 1.72, 1.42);
+
+    const sala1Question = addVestibulePanel(6, 1, 'UNA PREGUNTA PARA PENSAR', [
+      '¿Era Andrés Benítez solamente',
+      'un escultor?',
+      '',
+      'Descubre los cuatro oficios',
+      'que desarrolló a lo largo de su vida.'
+    ], 'x+', 1.72, 1.18);
+
+    sala1Question.userData.museum = {
+      titulo: 'Una pregunta para pensar',
+      autor: 'Sala 1 · El Hombre',
+      descripcion: 'Andrés Benítez y Perea fue tallista, ensamblador, retablista y arquitecto.',
+      curiosidad: 'Su actividad artística no se limitó a un único oficio: desarrolló diferentes facetas relacionadas con el trabajo de la madera, los retablos y la arquitectura.'
+    };
+    vestibuleInteractive.push(sala1Question);
+
     // Panel de contexto: explica por qué el museo une la figura de Andrés
     // Benítez con el 40.º aniversario del centro.
     addVestibulePanel(2, 8, '¿POR QUÉ ESTE MUSEO?', [
