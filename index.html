@@ -734,15 +734,16 @@
 
     const logoLoader = new THREE.TextureLoader();
     logoLoader.load(
-      './logo.jpeg',
+      'https://blogsaverroes.juntadeandalucia.es/iesandresbenitez/files/2025/10/cropped-logo-ies-andres-benitez-sin-sombra-1.png',
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
         logoCanvas.material.map = texture;
         logoCanvas.material.needsUpdate = true;
       },
       undefined,
-      () => {
-        console.warn('No se ha encontrado logo.jpeg. Añádelo en la raíz del proyecto.');
+      (error) => {
+        console.warn('No se ha podido cargar el logo oficial del IES Andrés Benítez.', error);
       }
     );
 
