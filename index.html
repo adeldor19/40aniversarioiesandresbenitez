@@ -436,7 +436,7 @@
     });
 
     const heroPanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.15, 0.90),
+      new THREE.PlaneGeometry(2.55, 1.05),
       new THREE.MeshBasicMaterial({ map: heroTexture, side: THREE.DoubleSide })
     );
     const heroWall = gridToWorld(3, 0);
@@ -448,14 +448,16 @@
     scene.add(heroPanel);
 
     // Línea temporal centrada bajo el título.
+    const timelineWidth = 2.40;
     const timelineTexture = createCanvasTexture(1200, 300, (ctx, w, h) => {
       ctx.fillStyle = '#5B2939';
       ctx.fillRect(0, 0, w, h);
+
       ctx.strokeStyle = '#B58A5A';
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(120, 150);
-      ctx.lineTo(1080, 150);
+      ctx.moveTo(120, 155);
+      ctx.lineTo(1080, 155);
       ctx.stroke();
 
       const years = ['1725', '1786', '1986', '2026'];
@@ -464,21 +466,23 @@
 
       ctx.textAlign = 'center';
       xs.forEach((x, i) => {
+        ctx.fillStyle = '#F5EFE5';
+        ctx.font = 'bold 30px Arial';
+        ctx.fillText(years[i], x, 88);
+
         ctx.fillStyle = '#B58A5A';
         ctx.beginPath();
-        ctx.arc(x, 150, 13, 0, Math.PI * 2);
+        ctx.arc(x, 155, 10, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 32px Arial';
-        ctx.fillText(years[i], x, 95);
+
         ctx.fillStyle = '#CDBFA8';
-        ctx.font = '20px Arial';
-        ctx.fillText(labels[i], x, 205);
+        ctx.font = '18px Arial';
+        ctx.fillText(labels[i], x, 222);
       });
     });
 
     const timelinePanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.15, 0.54),
+      new THREE.PlaneGeometry(timelineWidth, 0.60),
       new THREE.MeshBasicMaterial({ map: timelineTexture, side: THREE.DoubleSide })
     );
     timelinePanel.position.set(
@@ -639,18 +643,18 @@
     const timelineX = [120, 440, 760, 1080];
     timelineX.forEach((x, index) => {
       const hotspot = new THREE.Mesh(
-        new THREE.CircleGeometry(0.09, 24),
+        new THREE.CircleGeometry(0.045, 24),
         new THREE.MeshBasicMaterial({
           color: 0xB58A5A,
           side: THREE.DoubleSide
         })
       );
 
-      const localX = (x / 1200 - 0.5) * 2.15;
+      const localX = (x / 1200 - 0.5) * timelineWidth;
       hotspot.position.set(
         heroWall.x + localX,
         0.78,
-        heroWall.z + CELL_SIZE / 2 + 0.072
+        heroWall.z + CELL_SIZE / 2 + 0.082
       );
       hotspot.userData.timeline = timelineEvents[index];
       scene.add(hotspot);
