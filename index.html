@@ -644,8 +644,8 @@
 
         const visibleLines = lines.filter(Boolean);
         const maxTextWidth = w - 500;
-        const baseFont = visibleLines.length >= 7 ? 68 : visibleLines.length >= 5 ? 76 : 82;
-        const lineGap = visibleLines.length >= 7 ? 22 : 24;
+        const baseFont = visibleLines.length >= 7 ? 72 : visibleLines.length >= 5 ? 92 : 104;
+        const lineGap = visibleLines.length >= 7 ? 24 : 28;
 
         // Ajustamos automáticamente cada línea para que no quede ni diminuta
         // ni pegada al borde. Las líneas largas se parten en dos si hace falta.
@@ -670,8 +670,8 @@
 
         const lineHeight = baseFont + lineGap;
         const blockHeight = wrapped.length * lineHeight;
-        const contentTop = 340;
-        const contentBottom = h - 180;
+        const contentTop = 350;
+        const contentBottom = 1420;
         const availableHeight = contentBottom - contentTop;
         const firstY = contentTop + (availableHeight - blockHeight) / 2 + lineHeight / 2;
 
