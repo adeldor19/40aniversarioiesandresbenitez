@@ -488,21 +488,29 @@
     );
     scene.add(timelinePanel);
 
-    // Identificación de la sala en la que estamos.
-    // Cada cara de cada muro identifica el espacio que queda detrás de ella.
-    addWallSign(6, 3, 'VESTÍBULO', '40 AÑOS DE HISTORIA', 'x+', 1.00, 0.46);
-    addWallSign(6, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 1.00, 0.46);
+    // IDENTIFICACIÓN DE ESPACIOS
+    // Cada cara identifica exactamente el espacio que queda detrás de ese muro.
+    //
+    // VESTÍBULO | muro 6 | SALA 1 | muro 11 | SALA 2 |
+    // muro 18 | SALA 3 | muro 23 | SALIDA | muro 25 | FIN
 
-    addWallSign(11, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x+', 1.00, 0.46);
-    addWallSign(11, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 1.00, 0.46);
+    // Muro 6 · VESTÍBULO / SALA 1
+    addWallSign(6, 3, 'VESTÍBULO', '40 AÑOS DE HISTORIA', 'x-', 1.00, 0.46);
+    addWallSign(6, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x+', 1.00, 0.46);
 
-    addWallSign(18, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.00, 0.46);
-    addWallSign(18, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.00, 0.46);
+    // Muro 11 · SALA 1 / SALA 2
+    addWallSign(11, 3, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 1.00, 0.46);
+    addWallSign(11, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.00, 0.46);
 
-    addWallSign(23, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 1.00, 0.46);
-    addWallSign(23, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x-', 1.00, 0.46);
+    // Muro 18 · SALA 2 / SALA 3
+    addWallSign(18, 3, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x-', 1.00, 0.46);
+    addWallSign(18, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 1.00, 0.46);
 
-    // El muro final cierra el recorrido; solo se necesita señal en su cara interior.
+    // Muro 23 · SALA 3 / ZONA DE SALIDA
+    addWallSign(23, 3, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.00, 0.46);
+    addWallSign(23, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x+', 1.00, 0.46);
+
+    // Muro 25 · cierre de la zona de salida
     addWallSign(25, 3, 'SALIDA', 'FIN DEL RECORRIDO', 'x-', 1.00, 0.46);
 
     // La línea temporal principal del vestíbulo es la única cronología visible.
