@@ -389,7 +389,6 @@
       2.15,
       entranceWall.z + CELL_SIZE / 2 + 0.035
     );
-    entrancePanel.rotation.y = Math.PI;
     scene.add(entrancePanel);
 
     const entranceFloor = new THREE.Mesh(
@@ -443,7 +442,6 @@
       0.95,
       gridToWorld(2, 0).z + CELL_SIZE / 2 + 0.04
     );
-    timeline.rotation.y = Math.PI;
     scene.add(timeline);
 
     // ------------------------------------------------------------
