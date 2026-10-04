@@ -515,6 +515,172 @@
 
     // La línea temporal principal del vestíbulo es la única cronología visible.
 
+    // ------------------------------------------------------------
+    // VESTÍBULO · INTRODUCCIÓN
+    // ------------------------------------------------------------
+
+    function createInfoTexture(title, lines, accent = '#B58A5A') {
+      return createCanvasTexture(900, 520, (ctx, w, h) => {
+        ctx.fillStyle = '#4A1F2D';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 6;
+        ctx.strokeRect(22, 22, w - 44, h - 44);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = accent;
+        ctx.font = 'bold 34px Arial';
+        ctx.fillText(title, w / 2, 88);
+
+        ctx.strokeStyle = '#8B5A68';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(170, 118);
+        ctx.lineTo(730, 118);
+        ctx.stroke();
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#F5EFE5';
+        ctx.font = '24px Arial';
+
+        let y = 175;
+        lines.forEach((line, index) => {
+          const words = line.split(' ');
+          let current = '';
+          const maxWidth = 680;
+          const lineHeight = 36;
+
+          words.forEach((word) => {
+            const test = current ? current + ' ' + word : word;
+            if (ctx.measureText(test).width > maxWidth) {
+              ctx.fillText(current, 110, y);
+              y += lineHeight;
+              current = word;
+            } else {
+              current = test;
+            }
+          });
+
+          if (current) {
+            ctx.fillText(current, 110, y);
+            y += lineHeight;
+          }
+
+          if (index < lines.length - 1) y += 14;
+        });
+      });
+    }
+
+    function addVestibulePanel(gx, gy, title, lines, side = 'z-', width = 1.75, height = 0.98) {
+      const wall = gridToWorld(gx, gy);
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, height),
+        new THREE.MeshBasicMaterial({
+          map: createInfoTexture(title, lines),
+          side: THREE.DoubleSide
+        })
+      );
+
+      const inset = 0.018;
+      if (side === 'z-') {
+        panel.position.set(wall.x, 1.78, wall.z - CELL_SIZE / 2 - inset);
+        panel.rotation.y = Math.PI;
+      } else if (side === 'z+') {
+        panel.position.set(wall.x, 1.78, wall.z + CELL_SIZE / 2 + inset);
+      } else if (side === 'x-') {
+        panel.position.set(wall.x - CELL_SIZE / 2 - inset, 1.78, wall.z);
+        panel.rotation.y = -Math.PI / 2;
+      } else {
+        panel.position.set(wall.x + CELL_SIZE / 2 + inset, 1.78, wall.z);
+        panel.rotation.y = Math.PI / 2;
+      }
+
+      scene.add(panel);
+      return panel;
+    }
+
+    // Panel de contexto: explica por qué el museo une la figura de Andrés
+    // Benítez con el 40.º aniversario del centro.
+    addVestibulePanel(2, 8, '¿POR QUÉ ESTE MUSEO?', [
+      'En 2026 el IES Andrés Benítez celebra',
+      '40 años de historia. Este recorrido',
+      'recupera la figura de Andrés Benítez',
+      'y Perea y la conecta con la identidad',
+      'del centro que lleva su nombre.'
+    ], 'z-', 1.72, 0.98);
+
+    // Panel de orientación: prepara al visitante para el recorrido.
+    addVestibulePanel(4, 8, 'TU RECORRIDO', [
+      '01 · EL HOMBRE',
+      '¿Quién fue Andrés Benítez?',
+      '',
+      '02 · EL ARTISTA',
+      'Su taller y su oficio',
+      '',
+      '03 · JEREZ',
+      'El siglo XVIII'
+    ], 'z-', 1.72, 0.98);
+
+    // ------------------------------------------------------------
+    // CRONOLOGÍA INTERACTIVA
+    // ------------------------------------------------------------
+
+    const timelineEvents = [
+      {
+        year: '1725',
+        title: 'Nace Andrés Benítez',
+        text: 'Andrés Benítez y Perea nace en Jerez de la Frontera el 29 de noviembre de 1725.'
+      },
+      {
+        year: '1786',
+        title: 'Fallece',
+        text: 'Fallece el 3 de septiembre de 1786, después de desarrollar una parte importante de su trayectoria en Jerez.'
+      },
+      {
+        year: '1986',
+        title: 'Nace el IES',
+        text: 'El instituto que lleva su nombre inicia su historia en 1986.'
+      },
+      {
+        year: '2026',
+        title: '40.º aniversario',
+        text: 'El IES Andrés Benítez celebra cuatro décadas de historia y recupera su vínculo con el personaje que da nombre al centro.'
+      }
+    ];
+
+    const timelineHotspots = [];
+    const timelineX = [120, 440, 760, 1080];
+    timelineX.forEach((x, index) => {
+      const hotspot = new THREE.Mesh(
+        new THREE.CircleGeometry(0.09, 24),
+        new THREE.MeshBasicMaterial({
+          color: 0xB58A5A,
+          side: THREE.DoubleSide
+        })
+      );
+
+      const localX = (x / 1200 - 0.5) * 2.15;
+      hotspot.position.set(
+        heroWall.x + localX,
+        0.78,
+        heroWall.z + CELL_SIZE / 2 + 0.072
+      );
+      hotspot.userData.timeline = timelineEvents[index];
+      scene.add(hotspot);
+      timelineHotspots.push(hotspot);
+    });
+
+    function showTimelinePanel(data) {
+      showMuseumPanel({
+        titulo: data.year + ' · ' + data.title,
+        autor: 'Cronología del museo',
+        descripcion: data.text,
+        curiosidad: 'Pulsa Cerrar para continuar el recorrido.'
+      });
+    }
+
+    // ------------------------------------------------------------
     // MUSEO · PRIMERA PIEZA
     // ------------------------------------------------------------
 
@@ -614,10 +780,13 @@
 
       raycaster.setFromCamera(pointer, camera);
 
-      const hits = raycaster.intersectObject(artwork, false);
+      const interactiveObjects = [artwork, ...timelineHotspots];
+      const hits = raycaster.intersectObjects(interactiveObjects, false);
 
-      if (hits.length > 0 && artwork.userData.museum) {
-        showMuseumPanel(artwork.userData.museum);
+      if (hits.length > 0) {
+        const object = hits[0].object;
+        if (object.userData.museum) showMuseumPanel(object.userData.museum);
+        if (object.userData.timeline) showTimelinePanel(object.userData.timeline);
       }
     });
 
@@ -794,10 +963,13 @@
 
         vrRaycaster.set(origin, direction);
 
-        const hits = vrRaycaster.intersectObject(artwork, false);
+        const interactiveObjects = [artwork, ...timelineHotspots];
+        const hits = vrRaycaster.intersectObjects(interactiveObjects, false);
 
-        if (hits.length > 0 && artwork.userData.museum) {
-          showMuseumPanel(artwork.userData.museum);
+        if (hits.length > 0) {
+          const object = hits[0].object;
+          if (object.userData.museum) showMuseumPanel(object.userData.museum);
+          if (object.userData.timeline) showTimelinePanel(object.userData.timeline);
         }
       });
     });
