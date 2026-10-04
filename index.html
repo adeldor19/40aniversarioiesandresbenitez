@@ -680,64 +680,61 @@
       'El siglo XVIII'
     ], 'z-', 1.72, 0.98);
 
-    // Pieza gráfica del aniversario, integrada en la gran pared del vestíbulo.
-    function createAnniversary2DTexture() {
-      return createCanvasTexture(900, 650, (ctx, w, h) => {
-        ctx.fillStyle = '#4A1F2D';
-        ctx.fillRect(0, 0, w, h);
+    // Logo del IES: lienzo cuadrado grande en la pared principal del vestíbulo.
+    const logoFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(1.28, 1.28, 0.08),
+      new THREE.MeshStandardMaterial({
+        color: 0xB58A5A,
+        roughness: 0.5,
+        metalness: 0.08
+      })
+    );
 
-        ctx.strokeStyle = '#B58A5A';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(24, 24, w - 48, h - 48);
-
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#B58A5A';
-        ctx.font = 'bold 38px Arial';
-        ctx.fillText('40.º ANIVERSARIO', w / 2, 105);
-
-        ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 170px Arial';
-        ctx.fillText('40', w / 2, 320);
-
-        ctx.strokeStyle = '#8B5A68';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(190, 380);
-        ctx.lineTo(710, 380);
-        ctx.stroke();
-
-        ctx.fillStyle = '#E7D8BF';
-        ctx.font = 'bold 28px Arial';
-        ctx.fillText('IES ANDRÉS BENÍTEZ', w / 2, 445);
-
-        ctx.fillStyle = '#CDBFA8';
-        ctx.font = '24px Arial';
-        ctx.fillText('1986 — 2026', w / 2, 490);
-      });
-    }
-
-    const anniversary2D = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.05, 0.76),
+    const logoCanvas = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.16, 1.16),
       new THREE.MeshBasicMaterial({
-        map: createAnniversary2DTexture(),
+        color: 0xF5EFE5,
         side: THREE.DoubleSide
       })
     );
-    const anniversaryWall = gridToWorld(3, 8);
-    anniversary2D.position.set(
-      anniversaryWall.x,
-      1.70,
-      anniversaryWall.z - CELL_SIZE / 2 - 0.012
+
+    const logoLoader = new THREE.TextureLoader();
+    logoLoader.load(
+      'logo.jpeg',
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        logoCanvas.material.map = texture;
+        logoCanvas.material.needsUpdate = true;
+      },
+      undefined,
+      () => {
+        console.warn('No se ha encontrado logo.jpeg. Añádelo en la raíz del proyecto.');
+      }
     );
-    anniversary2D.rotation.y = Math.PI;
-    anniversary2D.userData.museum = {
-      titulo: '40.º ANIVERSARIO',
-      autor: 'IES Andrés Benítez · 1986–2026',
-      descripcion: 'Cuarenta años de historia del instituto y un recorrido que conecta su identidad con la figura de Andrés Benítez y Perea.',
-      curiosidad: 'El aniversario es el punto de partida de este museo virtual.'
+
+    const logoWall = gridToWorld(3, 8);
+    logoFrame.position.set(
+      logoWall.x,
+      1.68,
+      logoWall.z + CELL_SIZE / 2 + 0.035
+    );
+    logoCanvas.position.set(
+      logoWall.x,
+      1.68,
+      logoWall.z + CELL_SIZE / 2 + 0.082
+    );
+
+    const logoGroup = new THREE.Group();
+    logoGroup.add(logoFrame);
+    logoGroup.add(logoCanvas);
+    logoGroup.userData.museum = {
+      titulo: 'IES ANDRÉS BENÍTEZ',
+      autor: 'Logo del centro',
+      descripcion: 'La identidad visual del instituto preside el vestíbulo del museo del 40.º aniversario.',
+      curiosidad: 'Este lienzo está preparado para cargar directamente la imagen cuadrada logo.jpeg.'
     };
-    scene.add(anniversary2D);
-    vestibuleInteractive.push(anniversary2D);
+    scene.add(logoGroup);
+    vestibuleInteractive.push(logoGroup);
 
     // ------------------------------------------------------------
     // VESTÍBULO · PIEZAS ESCÉNICAS
@@ -804,7 +801,7 @@
     vestibuleInteractive.push(workshop);
 
     // Pregunta de entrada: se recuperará al final del museo.
-    const questionPanel = addVestibulePanel(6, 4, 'UNA PREGUNTA PARA EMPEZAR', [
+    const questionPanel = addVestibulePanel(6, 2, 'UNA PREGUNTA PARA EMPEZAR', [
       '¿Qué relación existe',
       'entre un artista del siglo XVIII',
       'y un instituto del siglo XXI?',
