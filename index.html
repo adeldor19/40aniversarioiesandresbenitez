@@ -195,7 +195,7 @@
       }
 
       [6, 11, 18, 23, 25].forEach((wallX) => {
-        if (gy !== 4) row[wallX] = '#';
+        if (wallX === 25 || gy !== 4) row[wallX] = '#';
       });
 
       return row.join('');
