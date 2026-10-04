@@ -740,7 +740,7 @@
         })
       );
 
-      const inset = 0.018;
+      const inset = 0.035;
       if (side === 'z-') {
         panel.position.set(wall.x, 1.78, wall.z - CELL_SIZE / 2 - inset);
         panel.rotation.y = Math.PI;
@@ -771,21 +771,21 @@
       'Desarrolló buena parte de su trayectoria en Jerez',
       'y abrió su taller en la calle Honda en 1754.',
       'Su obra está ligada al desarrollo del rococó jerezano.'
-    ], 'z+', 2.85, 1.58);
+    ], 'z+', 2.50, 1.58);
 
     const sala1Timeline = addVestibulePanel(9, 8, 'SU VIDA EN CUATRO MOMENTOS', [
       '1725 · Nace en Jerez de la Frontera',
       '1754 · Abre su taller en la calle Honda',
       '1764–1775 · Desarrolla obras y encargos destacados',
       '1786 · Fallece en Jerez'
-    ], 'z-', 3.05, 1.69);
+    ], 'z-', 2.50, 1.69);
 
     const sala1Trades = addVestibulePanel(11, 6, 'UN HOMBRE · CUATRO OFICIOS', [
       'TALLISTA · Trabaja y ornamenta la madera.',
       'ENSAMBLADOR · Construye y monta estructuras.',
       'RETABLISTA · Diseña y realiza retablos.',
       'ARQUITECTO · Interviene también en espacios y edificios.'
-    ], 'x-', 1.72, 0.96);
+    ], 'x-', 1.16, 0.96);
 
     const sala1Question = addVestibulePanel(6, 1, 'UNA PREGUNTA PARA PENSAR', [
       '¿Era Andrés Benítez solamente',
@@ -793,7 +793,7 @@
       '',
       'Descubre los cuatro oficios',
       'que desarrolló a lo largo de su vida.'
-    ], 'x+', 1.72, 0.96);
+    ], 'x+', 1.16, 0.96);
 
     sala1Question.userData.museum = {
       titulo: 'Una pregunta para pensar',
@@ -1060,7 +1060,7 @@
         })
       );
 
-      const localX = (x / 1200 - 0.5) * timelineWidth;
+      const localX = (x / 2400 - 0.5) * timelineWidth;
       hotspot.position.set(
         heroWall.x + localX,
         0.78,
