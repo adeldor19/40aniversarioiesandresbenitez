@@ -612,27 +612,59 @@
         ctx.strokeRect(36, 36, w - 72, h - 72);
 
         ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // La cartela se compone como una pieza editorial:
+        // título arriba y el bloque de contenido centrado en el espacio restante.
         ctx.fillStyle = accent;
         ctx.font = 'bold 68px Arial';
-        ctx.fillText(title, w / 2, 128);
+        ctx.fillText(title, w / 2, 118);
 
         ctx.strokeStyle = '#8B5A68';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(280, 168);
-        ctx.lineTo(1520, 168);
+        ctx.moveTo(280, 174);
+        ctx.lineTo(1520, 174);
         ctx.stroke();
 
-        ctx.fillStyle = '#F5EFE5';
-
         const visibleLines = lines.filter(Boolean);
-        const lineHeight = visibleLines.length >= 7 ? 78 : visibleLines.length >= 5 ? 88 : 96;
-        const totalHeight = (visibleLines.length - 1) * lineHeight;
-        const startY = Math.max(250, Math.min(390, 520 - totalHeight / 2));
+        const maxTextWidth = w - 300;
+        const baseFont = visibleLines.length >= 7 ? 48 : visibleLines.length >= 5 ? 54 : 60;
+        const lineGap = visibleLines.length >= 7 ? 18 : 20;
 
-        visibleLines.forEach((line, index) => {
-          ctx.font = line.length > 40 ? '42px Arial' : '46px Arial';
-          ctx.fillText(line, w / 2, startY + index * lineHeight);
+        // Ajustamos automáticamente cada línea para que no quede ni diminuta
+        // ni pegada al borde. Las líneas largas se parten en dos si hace falta.
+        const wrapped = [];
+        visibleLines.forEach((line) => {
+          ctx.font = `${baseFont}px Arial`;
+          const words = line.split(' ');
+          let current = '';
+
+          words.forEach((word) => {
+            const candidate = current ? `${current} ${word}` : word;
+            if (ctx.measureText(candidate).width <= maxTextWidth) {
+              current = candidate;
+            } else {
+              if (current) wrapped.push(current);
+              current = word;
+            }
+          });
+
+          if (current) wrapped.push(current);
+        });
+
+        const lineHeight = baseFont + lineGap;
+        const blockHeight = wrapped.length * lineHeight;
+        const contentTop = 220;
+        const contentBottom = 920;
+        const availableHeight = contentBottom - contentTop;
+        const firstY = contentTop + (availableHeight - blockHeight) / 2 + lineHeight / 2;
+
+        ctx.fillStyle = '#F5EFE5';
+        ctx.font = `${baseFont}px Arial`;
+
+        wrapped.forEach((line, index) => {
+          ctx.fillText(line, w / 2, firstY + index * lineHeight);
         });
       });
     }
@@ -647,26 +679,53 @@
         ctx.strokeRect(36, 36, w - 72, h - 72);
 
         ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
         ctx.fillStyle = '#B58A5A';
-        ctx.font = 'bold 76px Arial';
-        ctx.fillText(title, w / 2, 140);
+        ctx.font = 'bold 72px Arial';
+        ctx.fillText(title, w / 2, 130);
 
         ctx.strokeStyle = '#8B5A68';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(410, 180);
-        ctx.lineTo(1390, 180);
+        ctx.moveTo(410, 184);
+        ctx.lineTo(1390, 184);
         ctx.stroke();
 
-        ctx.fillStyle = '#F5EFE5';
-        ctx.font = 'bold 56px Arial';
         const visibleLines = lines.filter(Boolean);
-        const lineHeight = 96;
-        const totalHeight = (visibleLines.length - 1) * lineHeight;
-        const startY = 560 - totalHeight / 2;
+        const maxTextWidth = w - 300;
+        const baseFont = visibleLines.length >= 5 ? 52 : 58;
+        const lineHeight = baseFont + 26;
+        const wrapped = [];
 
-        visibleLines.forEach((line, index) => {
-          ctx.fillText(line, w / 2, startY + index * lineHeight);
+        visibleLines.forEach((line) => {
+          ctx.font = `${baseFont}px Arial`;
+          const words = line.split(' ');
+          let current = '';
+
+          words.forEach((word) => {
+            const candidate = current ? `${current} ${word}` : word;
+            if (ctx.measureText(candidate).width <= maxTextWidth) {
+              current = candidate;
+            } else {
+              if (current) wrapped.push(current);
+              current = word;
+            }
+          });
+
+          if (current) wrapped.push(current);
+        });
+
+        const blockHeight = wrapped.length * lineHeight;
+        const contentTop = 230;
+        const contentBottom = 920;
+        const firstY = contentTop + ((contentBottom - contentTop) - blockHeight) / 2 + lineHeight / 2;
+
+        ctx.fillStyle = '#F5EFE5';
+        ctx.font = `${baseFont}px Arial`;
+
+        wrapped.forEach((line, index) => {
+          ctx.fillText(line, w / 2, firstY + index * lineHeight);
         });
       });
     }
