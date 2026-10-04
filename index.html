@@ -1363,7 +1363,7 @@ vestibuleInteractive.push(questionStand);
     });
 
     const s2_tableTop = new THREE.Mesh(
-      new THREE.BoxGeometry(1.65, 0.12, 0.82),
+      new THREE.BoxGeometry(2.20, 0.14, 1.00),
       s2_workshopTableMaterial
     );
     s2_tableTop.position.y = 0.78;
@@ -1371,7 +1371,7 @@ vestibuleInteractive.push(questionStand);
 
     [[-0.60, -0.27], [0.60, -0.27], [-0.60, 0.27], [0.60, 0.27]].forEach(([x, z]) => {
       const leg = new THREE.Mesh(
-        new THREE.BoxGeometry(0.10, 0.72, 0.10),
+        new THREE.BoxGeometry(0.12, 0.72, 0.12),
         s2_workshopTableMaterial
       );
       leg.position.set(x, 0.38, z);
@@ -1379,49 +1379,49 @@ vestibuleInteractive.push(questionStand);
     });
 
     const s2_woodBlock = new THREE.Mesh(
-      new THREE.BoxGeometry(0.48, 0.30, 0.34),
+      new THREE.BoxGeometry(0.46, 0.34, 0.36),
       s2_workshopWoodMaterial
     );
-    s2_woodBlock.position.set(-0.48, 0.99, -0.02);
+    s2_woodBlock.position.set(-0.72, 1.03, -0.18);
     sala2Workshop.add(s2_woodBlock);
 
     const s2_carvedBlock = new THREE.Mesh(
-      new THREE.BoxGeometry(0.42, 0.30, 0.30),
+      new THREE.BoxGeometry(0.46, 0.34, 0.34),
       s2_workshopWoodMaterial
     );
-    s2_carvedBlock.position.set(0.24, 0.99, 0.02);
+    s2_carvedBlock.position.set(0.52, 1.03, -0.05);
     s2_carvedBlock.rotation.y = -0.20;
     sala2Workshop.add(s2_carvedBlock);
 
     const s2_gouge = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.028, 0.045, 0.62, 14),
+      new THREE.CylinderGeometry(0.045, 0.065, 0.82, 16),
       s2_workshopMetalMaterial
     );
-    s2_gouge.rotation.z = Math.PI / 2.35;
-    s2_gouge.position.set(0.02, 1.02, 0.25);
+    s2_gouge.rotation.z = Math.PI / 2.15;
+    s2_gouge.position.set(-0.05, 1.08, 0.34);
     sala2Workshop.add(s2_gouge);
 
     const s2_handle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055, 0.065, 0.28, 14),
+      new THREE.CylinderGeometry(0.065, 0.075, 0.34, 14),
       s2_workshopWoodMaterial
     );
     s2_handle.rotation.z = Math.PI / 2.8;
-    s2_handle.position.set(-0.14, 1.10, 0.23);
+    s2_handle.position.set(-0.40, 1.13, 0.34);
     sala2Workshop.add(s2_handle);
 
     const s2_mallet = new THREE.Mesh(
-      new THREE.BoxGeometry(0.16, 0.12, 0.28),
+      new THREE.BoxGeometry(0.22, 0.16, 0.34),
       s2_workshopWoodMaterial
     );
-    s2_mallet.position.set(0.55, 1.00, -0.22);
+    s2_mallet.position.set(0.78, 1.06, 0.28);
     s2_mallet.rotation.y = 0.25;
     sala2Workshop.add(s2_mallet);
 
     const s2_malletHandle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12),
+      new THREE.CylinderGeometry(0.032, 0.045, 0.52, 12),
       s2_workshopWoodMaterial
     );
-    s2_malletHandle.position.set(0.55, 0.80, -0.22);
+    s2_malletHandle.position.set(0.78, 0.82, 0.28);
     s2_malletHandle.rotation.z = 0.12;
     sala2Workshop.add(s2_malletHandle);
 
@@ -1431,8 +1431,8 @@ vestibuleInteractive.push(questionStand);
       gridToWorld(15, 4).z
     );
 
-    const sala2WorkshopHalfX = 1.65 / 2 + 0.10;
-    const sala2WorkshopHalfZ = 0.82 / 2 + 0.10;
+    const sala2WorkshopHalfX = 2.20 / 2 + 0.10;
+    const sala2WorkshopHalfZ = 1.00 / 2 + 0.10;
     solidExhibits.push({
       minX: sala2Workshop.position.x - sala2WorkshopHalfX,
       maxX: sala2Workshop.position.x + sala2WorkshopHalfX,
@@ -1487,12 +1487,12 @@ vestibuleInteractive.push(questionStand);
         'para descubrir sus elementos.'
       ],
       'x-',
-      1.16,
-      0.72
+      1.10,
+      0.46
     );
-    workshopSign.position.x = sala2Workshop.position.x - 1.02;
-    workshopSign.position.y = 1.12;
-    workshopSign.rotation.y = -Math.PI / 2;
+    workshopSign.position.x = sala2Workshop.position.x - 1.16;
+    workshopSign.position.y = 0.62;
+    workshopSign.rotation.y = Math.PI / 2;
     workshopSign.userData.museum = {
       titulo: 'Mesa interactiva',
       autor: 'Sala 2 · El Artista',
