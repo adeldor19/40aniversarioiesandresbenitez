@@ -1378,72 +1378,101 @@ vestibuleInteractive.push(questionStand);
       sala2Workshop.add(leg);
     });
 
+    // MATERIALES SOBRE LA MESA
+    // La madera en bruto y la madera tallada se diferencian por su forma.
     const s2_woodBlock = new THREE.Mesh(
-      new THREE.BoxGeometry(0.46, 0.34, 0.36),
+      new THREE.BoxGeometry(0.50, 0.34, 0.38),
       s2_workshopWoodMaterial
     );
-    s2_woodBlock.position.set(-0.72, 1.03, -0.18);
+    s2_woodBlock.position.set(-0.72, 1.02, -0.16);
     sala2Workshop.add(s2_woodBlock);
 
     const s2_carvedBlock = new THREE.Group();
 
     const s2_carvedCore = new THREE.Mesh(
-      new THREE.BoxGeometry(0.48, 0.30, 0.34),
+      new THREE.BoxGeometry(0.52, 0.34, 0.38),
       s2_workshopWoodMaterial
     );
-    s2_carvedCore.position.y = 0.99;
+    s2_carvedCore.position.set(0, 1.02, -0.10);
     s2_carvedBlock.add(s2_carvedCore);
 
-    const s2_carvedRelief = new THREE.Mesh(
-      new THREE.SphereGeometry(0.15, 20, 14),
+    // Dos pequeños relieves curvos para que se entienda que es una pieza tallada.
+    const s2_scrollLeft = new THREE.Mesh(
+      new THREE.TorusGeometry(0.095, 0.025, 8, 20, Math.PI * 1.35),
       s2_workshopWoodMaterial
     );
-    s2_carvedRelief.scale.set(1.35, 0.62, 0.72);
-    s2_carvedRelief.position.set(0.02, 1.12, 0.17);
-    s2_carvedBlock.add(s2_carvedRelief);
+    s2_scrollLeft.position.set(-0.11, 1.03, 0.105);
+    s2_scrollLeft.scale.y = 0.72;
+    s2_scrollLeft.rotation.z = Math.PI * 0.15;
+    s2_carvedBlock.add(s2_scrollLeft);
 
-    const s2_carvedRelief2 = new THREE.Mesh(
-      new THREE.SphereGeometry(0.11, 20, 14),
+    const s2_scrollRight = new THREE.Mesh(
+      new THREE.TorusGeometry(0.095, 0.025, 8, 20, Math.PI * 1.35),
       s2_workshopWoodMaterial
     );
-    s2_carvedRelief2.scale.set(0.85, 0.55, 0.60);
-    s2_carvedRelief2.position.set(-0.16, 1.07, 0.18);
-    s2_carvedBlock.add(s2_carvedRelief2);
+    s2_scrollRight.position.set(0.11, 1.03, 0.105);
+    s2_scrollRight.scale.y = 0.72;
+    s2_scrollRight.rotation.z = Math.PI * 0.85;
+    s2_carvedBlock.add(s2_scrollRight);
 
-    s2_carvedBlock.position.set(0.52, 0, -0.05);
-    s2_carvedBlock.rotation.y = -0.20;
+    s2_carvedBlock.position.set(0.52, 0, -0.04);
+    s2_carvedBlock.rotation.y = -0.10;
+    s2_carvedBlock.userData.museum = {
+      titulo: 'La madera tallada',
+      autor: 'Resultado del trabajo de talla',
+      descripcion: 'La pieza muestra cómo una superficie de madera puede transformarse mediante cortes, relieves y ornamentación.',
+      curiosidad: 'Los pequeños relieves curvos representan de forma sencilla el tipo de ornamentación que podía surgir del trabajo de talla.'
+    };
     sala2Workshop.add(s2_carvedBlock);
 
+    // GUBIA: mango de madera + hoja metálica corta, apoyada sobre la mesa.
     const s2_gouge = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.040, 0.055, 0.42, 16),
+      new THREE.CylinderGeometry(0.035, 0.050, 0.42, 16),
       s2_workshopMetalMaterial
     );
     s2_gouge.rotation.z = Math.PI / 2;
-    s2_gouge.position.set(-0.18, 0.91, 0.25);
+    s2_gouge.position.set(-0.12, 0.91, 0.30);
+    s2_gouge.userData.museum = {
+      titulo: 'La gubia',
+      autor: 'Herramienta de talla',
+      descripcion: 'La gubia permite retirar pequeñas cantidades de madera y crear hendiduras, curvas y relieves.',
+      curiosidad: 'Se utilizan perfiles diferentes según el tipo de corte que se quiere realizar.',
+      imagen: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Woodcarving_gouges.jpg',
+      fuenteImagen: 'Imagen: Terasaface · Wikimedia Commons · CC BY-SA 4.0'
+    };
     sala2Workshop.add(s2_gouge);
 
     const s2_handle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.075, 0.085, 0.34, 16),
+      new THREE.CylinderGeometry(0.070, 0.080, 0.34, 16),
       s2_workshopWoodMaterial
     );
     s2_handle.rotation.z = Math.PI / 2;
-    s2_handle.position.set(-0.52, 1.10, 0.25);
+    s2_handle.position.set(-0.42, 0.91, 0.30);
     sala2Workshop.add(s2_handle);
 
+    // MAZO: cabeza de madera + mango, ambos apoyados horizontalmente.
     const s2_mallet = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.12, 0.12, 0.42, 16),
+      new THREE.CylinderGeometry(0.105, 0.105, 0.34, 16),
       s2_workshopWoodMaterial
     );
     s2_mallet.rotation.z = Math.PI / 2;
-    s2_mallet.position.set(0.72, 0.91, 0.20);
+    s2_mallet.position.set(0.72, 0.91, 0.32);
+    s2_mallet.userData.museum = {
+      titulo: 'El mazo',
+      autor: 'Herramienta de golpeo',
+      descripcion: 'El mazo sirve para golpear con control la herramienta de talla y ayudar a retirar madera de la pieza.',
+      curiosidad: 'Su cabeza de madera permite trabajar con golpes más adecuados para la talla que un martillo metálico.',
+      imagen: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/PSM_V09_D034_Carpenter_wooden_mallet.jpg',
+      fuenteImagen: 'Imagen: Popular Science Monthly, 1876 · Wikimedia Commons · Dominio público'
+    };
     sala2Workshop.add(s2_mallet);
 
     const s2_malletHandle = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.035, 0.045, 0.46, 14),
+      new THREE.CylinderGeometry(0.030, 0.040, 0.48, 14),
       s2_workshopWoodMaterial
     );
-    s2_malletHandle.position.set(0.32, 0.91, 0.20);
     s2_malletHandle.rotation.z = Math.PI / 2;
+    s2_malletHandle.position.set(0.42, 0.91, 0.32);
     sala2Workshop.add(s2_malletHandle);
 
     sala2Workshop.position.set(
@@ -1467,31 +1496,6 @@ vestibuleInteractive.push(questionStand);
       autor: 'Estación de taller · Sala 2',
       descripcion: 'La mesa representa el espacio de trabajo donde se preparaban, tallaban y ensamblaban las piezas. Cada herramienta cumple una función distinta dentro del proceso.',
       curiosidad: 'Pulsa sobre cada elemento para descubrir qué función tenía.'
-    };
-
-    s2_carvedBlock.userData.museum = {
-      titulo: 'La madera tallada',
-      autor: 'Resultado del trabajo de talla',
-      descripcion: 'Una pieza de madera pasa de ser un material en bruto a convertirse en una superficie trabajada mediante cortes, relieves y ornamentación.',
-      curiosidad: 'La talla permite transformar una superficie plana en una composición llena de volumen y detalle.'
-    };
-
-    s2_gouge.userData.museum = {
-      titulo: 'La gubia',
-      autor: 'Herramienta de talla',
-      descripcion: 'La gubia es una herramienta de corte utilizada para retirar madera y crear hendiduras, curvas y relieves. Su forma permite controlar la profundidad y el perfil del corte.',
-      curiosidad: 'En un taller de talla se utilizan gubias de diferentes perfiles según el tipo de corte que se quiere realizar.',
-      imagen: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Woodcarving_gouges.jpg',
-      fuenteImagen: 'Imagen: Terasaface · Wikimedia Commons · CC BY-SA 4.0'
-    };
-
-    s2_mallet.userData.museum = {
-      titulo: 'El mazo',
-      autor: 'Herramienta de golpeo',
-      descripcion: 'El mazo se utiliza para golpear la herramienta de talla con control, ayudando a retirar pequeñas cantidades de madera sin dañar la pieza.',
-      curiosidad: 'A diferencia de un martillo metálico, el mazo de madera permite trabajar con golpes más adecuados para la talla.',
-      imagen: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/PSM_V09_D034_Carpenter_wooden_mallet.jpg',
-      fuenteImagen: 'Imagen: Popular Science Monthly, 1876 · Wikimedia Commons · Dominio público'
     };
 
     // El grupo permite localizar la mesa completa, mientras que sus hijos
