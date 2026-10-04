@@ -1364,12 +1364,19 @@ vestibuleInteractive.push(questionStand);
       raycaster.setFromCamera(pointer, camera);
 
       const interactiveObjects = [artwork, ...timelineHotspots, ...vestibuleInteractive];
-      const hits = raycaster.intersectObjects(interactiveObjects, false);
+      const hits = raycaster.intersectObjects(interactiveObjects, true);
 
       if (hits.length > 0) {
-        const object = hits[0].object;
-        if (object.userData.museum) showMuseumPanel(object.userData.museum);
-        if (object.userData.timeline) showTimelinePanel(object.userData.timeline);
+        let object = hits[0].object;
+
+        // Algunas piezas están formadas por un grupo con marco, imagen y cartela.
+        // Subimos por la jerarquía hasta encontrar los datos interactivos de la pieza.
+        while (object && !object.userData.museum && !object.userData.timeline) {
+          object = object.parent;
+        }
+
+        if (object?.userData.museum) showMuseumPanel(object.userData.museum);
+        if (object?.userData.timeline) showTimelinePanel(object.userData.timeline);
       }
     });
 
@@ -1548,12 +1555,19 @@ vestibuleInteractive.push(questionStand);
         vrRaycaster.set(origin, direction);
 
         const interactiveObjects = [artwork, ...timelineHotspots, ...vestibuleInteractive];
-        const hits = vrRaycaster.intersectObjects(interactiveObjects, false);
+        const hits = vrRaycaster.intersectObjects(interactiveObjects, true);
 
         if (hits.length > 0) {
-          const object = hits[0].object;
-          if (object.userData.museum) showMuseumPanel(object.userData.museum);
-          if (object.userData.timeline) showTimelinePanel(object.userData.timeline);
+          let object = hits[0].object;
+
+          // Algunas piezas están formadas por un grupo con marco, imagen y cartela.
+          // Subimos por la jerarquía hasta encontrar los datos interactivos de la pieza.
+          while (object && !object.userData.museum && !object.userData.timeline) {
+            object = object.parent;
+          }
+
+          if (object?.userData.museum) showMuseumPanel(object.userData.museum);
+          if (object?.userData.timeline) showTimelinePanel(object.userData.timeline);
         }
       });
     });
