@@ -194,7 +194,7 @@
         }
       }
 
-      [6, 11, 18, 23, 26].forEach((wallX) => {
+      [6, 11, 18, 23, 24].forEach((wallX) => {
         if (gy < 3 || gy > 5) row[wallX] = '#';
       });
 
@@ -375,32 +375,26 @@
         })
       );
 
+      // La señal se coloca directamente sobre la cara de una celda de pared.
+      // Nunca se coloca en una celda de paso.
+      const inset = 0.006;
       if (side === 'x+') {
-        sign.position.set(wall.x + CELL_SIZE / 2 + 0.003, 1.95, wall.z);
+        sign.position.set(wall.x + CELL_SIZE / 2 + inset, 1.82, wall.z);
         sign.rotation.y = Math.PI / 2;
       } else if (side === 'x-') {
-        sign.position.set(wall.x - CELL_SIZE / 2 - 0.003, 1.95, wall.z);
+        sign.position.set(wall.x - CELL_SIZE / 2 - inset, 1.82, wall.z);
         sign.rotation.y = -Math.PI / 2;
       } else if (side === 'z+') {
-        sign.position.set(wall.x, 1.95, wall.z + CELL_SIZE / 2 + 0.012);
+        sign.position.set(wall.x, 1.82, wall.z + CELL_SIZE / 2 + inset);
       } else {
-        sign.position.set(wall.x, 1.95, wall.z - CELL_SIZE / 2 - 0.003);
+        sign.position.set(wall.x, 1.82, wall.z - CELL_SIZE / 2 - inset);
         sign.rotation.y = Math.PI;
       }
 
-      const backing = new THREE.Mesh(
-        new THREE.BoxGeometry(width + 0.045, height + 0.045, 0.025),
-        new THREE.MeshStandardMaterial({ color: 0x0b1728, roughness: 0.72 })
-      );
-      backing.position.copy(sign.position);
-      backing.rotation.copy(sign.rotation);
-      backing.translateZ(-0.014);
-      scene.add(backing);
       scene.add(sign);
       return sign;
     }
 
-    // El cartel ocupa menos que la celda de pared: nunca sobresale por los laterales.
     // Gran título de bienvenida, centrado en el eje del vestíbulo.
     const heroTexture = createCanvasTexture(1200, 500, (ctx, w, h) => {
       ctx.fillStyle = '#0b1728';
@@ -506,8 +500,8 @@
     addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x+', 0.98, 0.46);
     addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 0.98, 0.46);
 
-    addWallSign(26, 4, 'SALIDA →', 'FIN DEL RECORRIDO', 'x+', 0.98, 0.46);
-    addWallSign(26, 4, '← SALIDA', 'REGRESA AL RECORRIDO', 'x-', 0.98, 0.46);
+    addWallSign(24, 4, 'SALIDA →', 'FIN DEL RECORRIDO', 'x+', 0.98, 0.46);
+    addWallSign(24, 4, '← SALIDA', 'REGRESA AL RECORRIDO', 'x-', 0.98, 0.46);
 
     // La línea temporal principal del vestíbulo es la única cronología visible.
 
