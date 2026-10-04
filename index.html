@@ -79,6 +79,22 @@
       line-height: 1.5;
       font-size: 14px;
     }
+    #museum-image {
+      display: none;
+      width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      margin: 12px 0;
+      border: 1px solid rgba(181,138,90,.65);
+      background: #F5EFE5;
+      border-radius: 8px;
+    }
+    #museum-source {
+      display: none;
+      margin-top: 5px !important;
+      font-size: 10px !important;
+      color: #CDBFA8 !important;
+    }
     #museum-close {
       margin-top: 14px;
       padding: 9px 14px;
@@ -140,7 +156,9 @@
   <div id="museum-panel">
     <h2 id="museum-title"></h2>
     <p id="museum-author"></p>
+    <img id="museum-image" alt="">
     <p id="museum-description"></p>
+    <p id="museum-source"></p>
     <p id="museum-curiosity"></p>
     <button id="museum-close">Cerrar</button>
   </div>
@@ -1364,14 +1382,14 @@ vestibuleInteractive.push(questionStand);
       new THREE.BoxGeometry(0.48, 0.30, 0.34),
       s2_workshopWoodMaterial
     );
-    s2_woodBlock.position.set(-0.34, 0.99, 0.02);
+    s2_woodBlock.position.set(-0.48, 0.99, -0.02);
     sala2Workshop.add(s2_woodBlock);
 
     const s2_carvedBlock = new THREE.Mesh(
       new THREE.BoxGeometry(0.42, 0.30, 0.30),
       s2_workshopWoodMaterial
     );
-    s2_carvedBlock.position.set(0.34, 0.99, 0.02);
+    s2_carvedBlock.position.set(0.24, 0.99, 0.02);
     s2_carvedBlock.rotation.y = -0.20;
     sala2Workshop.add(s2_carvedBlock);
 
@@ -1379,8 +1397,8 @@ vestibuleInteractive.push(questionStand);
       new THREE.CylinderGeometry(0.028, 0.045, 0.62, 14),
       s2_workshopMetalMaterial
     );
-    s2_gouge.rotation.z = Math.PI / 2.8;
-    s2_gouge.position.set(0.03, 1.00, 0.23);
+    s2_gouge.rotation.z = Math.PI / 2.35;
+    s2_gouge.position.set(0.02, 1.02, 0.25);
     sala2Workshop.add(s2_gouge);
 
     const s2_handle = new THREE.Mesh(
@@ -1395,7 +1413,7 @@ vestibuleInteractive.push(questionStand);
       new THREE.BoxGeometry(0.16, 0.12, 0.28),
       s2_workshopWoodMaterial
     );
-    s2_mallet.position.set(0.62, 0.98, -0.22);
+    s2_mallet.position.set(0.55, 1.00, -0.22);
     s2_mallet.rotation.y = 0.25;
     sala2Workshop.add(s2_mallet);
 
@@ -1403,7 +1421,7 @@ vestibuleInteractive.push(questionStand);
       new THREE.CylinderGeometry(0.025, 0.035, 0.42, 12),
       s2_workshopWoodMaterial
     );
-    s2_malletHandle.position.set(0.62, 0.82, -0.22);
+    s2_malletHandle.position.set(0.55, 0.80, -0.22);
     s2_malletHandle.rotation.z = 0.12;
     sala2Workshop.add(s2_malletHandle);
 
@@ -1422,13 +1440,41 @@ vestibuleInteractive.push(questionStand);
       maxZ: sala2Workshop.position.z + sala2WorkshopHalfZ
     });
 
-    sala2Workshop.userData.museum = {
-      titulo: 'El taller',
-      autor: 'Herramientas y materia',
-      descripcion: 'La mesa reúne algunos elementos que ayudan a imaginar el trabajo manual de un taller: madera, una pieza tallada, una gubia y un mazo.',
-      curiosidad: 'Pulsa sobre el taller para descubrir qué papel tiene cada elemento en el proceso de creación.'
+    // La mesa no es una única pieza: cada elemento se puede explorar por separado.
+    s2_tableTop.userData.museum = {
+      titulo: 'La mesa de trabajo',
+      autor: 'Estación de taller · Sala 2',
+      descripcion: 'La mesa representa el espacio de trabajo donde se preparaban, tallaban y ensamblaban las piezas. Cada herramienta cumple una función distinta dentro del proceso.',
+      curiosidad: 'Pulsa sobre cada elemento para descubrir qué función tenía.'
     };
 
+    s2_carvedBlock.userData.museum = {
+      titulo: 'La madera tallada',
+      autor: 'Resultado del trabajo de talla',
+      descripcion: 'Una pieza de madera pasa de ser un material en bruto a convertirse en una superficie trabajada mediante cortes, relieves y ornamentación.',
+      curiosidad: 'La talla permite transformar una superficie plana en una composición llena de volumen y detalle.'
+    };
+
+    s2_gouge.userData.museum = {
+      titulo: 'La gubia',
+      autor: 'Herramienta de talla',
+      descripcion: 'La gubia es una herramienta de corte utilizada para retirar madera y crear hendiduras, curvas y relieves. Su forma permite controlar la profundidad y el perfil del corte.',
+      curiosidad: 'En un taller de talla se utilizan gubias de diferentes perfiles según el tipo de corte que se quiere realizar.',
+      imagen: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Woodcarving_gouges.jpg',
+      fuenteImagen: 'Imagen: Terasaface · Wikimedia Commons · CC BY-SA 4.0'
+    };
+
+    s2_mallet.userData.museum = {
+      titulo: 'El mazo',
+      autor: 'Herramienta de golpeo',
+      descripcion: 'El mazo se utiliza para golpear la herramienta de talla con control, ayudando a retirar pequeñas cantidades de madera sin dañar la pieza.',
+      curiosidad: 'A diferencia de un martillo metálico, el mazo de madera permite trabajar con golpes más adecuados para la talla.',
+      imagen: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/PSM_V09_D034_Carpenter_wooden_mallet.jpg',
+      fuenteImagen: 'Imagen: Popular Science Monthly, 1876 · Wikimedia Commons · Dominio público'
+    };
+
+    // El grupo permite localizar la mesa completa, mientras que sus hijos
+    // contienen la información específica de cada herramienta.
     scene.add(sala2Workshop);
     vestibuleInteractive.push(sala2Workshop);
 
@@ -1445,53 +1491,15 @@ vestibuleInteractive.push(questionStand);
       0.72
     );
     workshopSign.position.x = sala2Workshop.position.x - 1.02;
-    workshopSign.position.y = 1.45;
-    workshopSign.rotation.y = Math.PI / 2;
+    workshopSign.position.y = 1.12;
+    workshopSign.rotation.y = -Math.PI / 2;
     workshopSign.userData.museum = {
       titulo: 'Mesa interactiva',
       autor: 'Sala 2 · El Artista',
-      descripcion: 'Puedes interactuar con la mesa y sus elementos para descubrir qué papel desempeñaban las herramientas y los materiales en el trabajo de taller.',
-      curiosidad: 'Prueba a pulsar sobre la madera y la gubia.'
+      descripcion: 'Puedes interactuar con la mesa y sus herramientas para descubrir qué papel desempeñaban los materiales y útiles en el trabajo de taller.',
+      curiosidad: 'Pulsa sobre la gubia o el mazo para ver una imagen y conocer su función.'
     };
     vestibuleInteractive.push(workshopSign);
-
-    // Pequeñas piezas informativas independientes sobre la mesa.
-    const sala2Wood = new THREE.Mesh(
-      new THREE.BoxGeometry(0.40, 0.40, 0.40),
-      s2_workshopWoodMaterial
-    );
-    sala2Wood.position.set(
-      sala2Workshop.position.x - 0.34,
-      1.15,
-      sala2Workshop.position.z + 0.02
-    );
-    sala2Wood.userData.museum = {
-      titulo: 'La madera',
-      autor: 'Materia prima',
-      descripcion: 'La madera es el soporte material sobre el que el tallista puede construir formas, relieves y ornamentación.',
-      curiosidad: 'Antes de convertirse en una obra, una pieza de madera es materia que debe ser seleccionada, preparada y trabajada.'
-    };
-    scene.add(sala2Wood);
-    vestibuleInteractive.push(sala2Wood);
-
-    const sala2Gouge = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.028, 0.045, 0.58, 14),
-      s2_workshopMetalMaterial
-    );
-    sala2Gouge.rotation.z = Math.PI / 2.8;
-    sala2Gouge.position.set(
-      sala2Workshop.position.x + 0.03,
-      1.18,
-      sala2Workshop.position.z + 0.23
-    );
-    sala2Gouge.userData.museum = {
-      titulo: 'La gubia',
-      autor: 'Herramienta de talla',
-      descripcion: 'La gubia permite retirar pequeñas cantidades de madera y crear relieves, curvas y detalles ornamentales.',
-      curiosidad: 'La herramienta y la mano trabajan juntas: la precisión del corte determina la forma que adquiere la madera.'
-    };
-    scene.add(sala2Gouge);
-    vestibuleInteractive.push(sala2Gouge);
 
     // ------------------------------------------------------------
     // MUSEO · PRIMERA PIEZA
@@ -1585,6 +1593,27 @@ vestibuleInteractive.push(questionStand);
       document.getElementById('museum-author').textContent = data.autor;
       document.getElementById('museum-description').textContent = data.descripcion;
       document.getElementById('museum-curiosity').textContent = data.curiosidad;
+
+      const image = document.getElementById('museum-image');
+      const source = document.getElementById('museum-source');
+
+      if (data.imagen) {
+        image.src = data.imagen;
+        image.alt = data.titulo || 'Imagen de la pieza';
+        image.style.display = 'block';
+      } else {
+        image.removeAttribute('src');
+        image.style.display = 'none';
+      }
+
+      if (data.fuenteImagen) {
+        source.textContent = data.fuenteImagen;
+        source.style.display = 'block';
+      } else {
+        source.textContent = '';
+        source.style.display = 'none';
+      }
+
       document.getElementById('museum-panel').style.display = 'block';
     }
 
