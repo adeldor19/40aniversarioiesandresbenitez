@@ -182,8 +182,8 @@
 
     // Museo lineal: vestíbulo → Sala 1 → Sala 2 → Sala 3.
     // Las puertas centrales permiten avanzar de una sala a la siguiente.
-    const GH = 13;
-    const GW = 31;
+    const GH = 9;
+    const GW = 39;
 
     const grid = Array.from({ length: GH }, (_, gy) => {
       const row = Array(GW).fill('.');
@@ -194,8 +194,8 @@
         }
       }
 
-      [8, 11, 19, 22].forEach((wallX) => {
-        if (gy < 5 || gy > 7) row[wallX] = '#';
+      [6, 11, 18, 23, 30].forEach((wallX) => {
+        if (gy < 3 || gy > 5) row[wallX] = '#';
       });
 
       return row.join('');
@@ -403,10 +403,10 @@
     );
 
     // Señalización de recorrido: cada tramo anuncia la sala que viene.
-    addWallSign(8, 6, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 1.08, 0.50);
-    addWallSign(11, 6, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 1.08, 0.50);
-    addWallSign(19, 6, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 1.08, 0.50);
-    addWallSign(22, 6, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 1.08, 0.50);
+    addWallSign(6, 4, '01 · EL HOMBRE', '¿QUIÉN FUE ANDRÉS BENÍTEZ?', 'x-', 0.98, 0.46);
+    addWallSign(11, 4, '02 · EL ARTISTA', 'SU TALLER Y SU OFICIO', 'x+', 0.98, 0.46);
+    addWallSign(18, 4, '03 · JEREZ', 'EL SIGLO XVIII', 'x-', 0.98, 0.46);
+    addWallSign(23, 4, 'SALIDA →', 'CONTINÚA EL RECORRIDO', 'x+', 0.98, 0.46);
 
     const routeTexture = createCanvasTexture(768, 220, (ctx, w, h) => {
       ctx.fillStyle = '#101c2d';
@@ -440,13 +440,13 @@
     });
 
     const routePanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.10, 0.32),
+      new THREE.PlaneGeometry(0.96, 0.28),
       new THREE.MeshBasicMaterial({ map: routeTexture, side: THREE.DoubleSide })
     );
-    const routeWall = gridToWorld(0, 4);
+    const routeWall = gridToWorld(0, 2);
     routePanel.position.set(
       routeWall.x + CELL_SIZE / 2 + 0.04,
-      1.15,
+      1.12,
       routeWall.z
     );
     routePanel.rotation.y = Math.PI / 2;
@@ -468,13 +468,12 @@
     const frameGroup = new THREE.Group();
 
     // Primera pieza: pared interior de la Sala 1.
-    const museumWall = gridToWorld(0, 4);
+    const museumWall = gridToWorld(3, 0);
     frameGroup.position.set(
-      museumWall.x + CELL_SIZE / 2 + 0.055,
-      1.55,
-      museumWall.z
+      museumWall.x,
+      1.48,
+      museumWall.z + CELL_SIZE / 2 + 0.055
     );
-    frameGroup.rotation.y = Math.PI / 2;
     scene.add(frameGroup);
 
     const frameMaterial = new THREE.MeshStandardMaterial({
@@ -492,16 +491,16 @@
     });
 
     const frame = new THREE.Mesh(
-      new THREE.BoxGeometry(0.92, 0.70, 0.10),
+      new THREE.BoxGeometry(0.78, 0.60, 0.08),
       frameMaterial
     );
 
     const artwork = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.76, 0.55),
+      new THREE.PlaneGeometry(0.64, 0.46),
       artworkMaterial
     );
 
-    artwork.position.z = 0.056;
+    artwork.position.z = 0.046;
     artwork.userData.museum = museumData;
 
     frameGroup.add(frame);
@@ -524,11 +523,11 @@
     const labelTexture = new THREE.CanvasTexture(labelCanvas);
 
     const label = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.92, 0.23),
+      new THREE.PlaneGeometry(0.78, 0.20),
       new THREE.MeshBasicMaterial({ map: labelTexture })
     );
 
-    label.position.set(0, -0.52, 0.056);
+    label.position.set(0, -0.45, 0.046);
     frameGroup.add(label);
 
     function showMuseumPanel(data) {
